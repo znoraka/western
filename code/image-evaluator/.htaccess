@@ -1,0 +1,6 @@
+#Options +FollowSymlinks
+#RewriteEngine on
+
+# Lorsque l'on tape dans la barre d'adresse www.votre_domaine.net/page-* c'est la page www.votre_domaine.net/page.php?id=* qui s'affiche
+# ^ et $ signifie respectivement le début et la fin d'une expression régulière
+#RewriteRule ^page-([0-9]+)$ /page.php?id=$1 [L]

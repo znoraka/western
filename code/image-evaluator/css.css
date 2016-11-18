@@ -1,0 +1,58 @@
+body {
+    background-color: lightgray;
+}
+
+.instructions {
+    width:70%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:5%;
+}
+
+.notes {
+    width:95%;
+    margin-top:2%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom:2%;
+}
+
+.firstform {
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:5%;
+    width:80%;
+}
+
+img.center {
+    display: block;
+    margin-top:2%;
+    margin-left: auto;
+    margin-right: auto;
+    height:75%;
+}
+
+form {
+  text-align: center;
+}
+
+.histo {
+    padding:2%;
+    float:left;
+    margin-left: auto;
+    margin-right: auto;
+    
+    text-align:center;
+}
+
+.histoimg {
+    height: auto;
+    width: 40vw;
+}
+
+.divhisto {
+    width:90%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
