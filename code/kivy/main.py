@@ -13,6 +13,8 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.dropdown import DropDown
 
+from kivy.core.image import Image as CoreImage
+
 import stegano_demo as stego
 
 import os
@@ -47,30 +49,12 @@ class ImageSelectScreen(Screen):
                             size_hint=(0.9, 0.9))
         self._popup.open()
 
-    def show_save(self):
-        content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Save file", content=content,
-                            size_hint=(0.9, 0.9))
-        self._popup.open()
-
     def load(self, path, filename):
         with open(os.path.join(path, filename[0])) as stream:
             self.imgbutton.load_image(os.path.join(path, filename[0]))
             self.manager.img = os.path.join(path, filename[0])
             
         self.dismiss_popup()
-
-    def save(self, path, filename):
-        with open(os.path.join(path, filename), 'w') as stream:
-            stream.write(self.text_input.text)
-
-        self.dismiss_popup()
-
-    def insert(self):
-        print "switching to insert view"
-
-    def decode(self):
-        print "switching to decode view"
 
 class MethodsDropDown(DropDown):
     def __init__(self, *args, **kwargs):
@@ -101,8 +85,22 @@ class InsertScreen(Screen):
         self.stegoimg.source = 'out.png'
         self.stegoimg.reload()
 
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def show_save(self):
+        content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Save file", content=content,
+                                 size_hint=(0.9, 0.9))
+        self._popup.open()
+
+    def save(self, path, filename):
+        CoreImage('out.png').save(os.path.join(path, filename))
+
+        self.dismiss_popup()
+             
 class RootScreen(ScreenManager):
-    img = 'lena.jpg'
+    img = 'lenac.jpg'
         
 class Editor(App):
     

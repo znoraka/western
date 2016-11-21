@@ -21,12 +21,12 @@
             size_hint_x: 0.3
             orientation: 'vertical'
             Button:
-                text: 'Insert'
+                text: 'Decode'
                 on_release:
                     root.manager.current = 'DecodeScreen'
                     root.manager.transition.direction = 'left'
             Button:
-                text: 'Decode'
+                text: 'Insert'
                 on_release:
                     root.manager.current = 'InsertScreen'
                     root.manager.transition.direction = 'left'
@@ -69,8 +69,11 @@
             Image:
                 id: coverimg
                 source: root.manager.img
-            Image:
+
+            ImageButton:
                 id: stegoimg
+                source: root.manager.img
+                on_release: root.show_save();
                 source: 'empty.png'
                 
         BoxLayout:
@@ -117,6 +120,7 @@
         orientation: "vertical"
         FileChooserIconView:
             id: filechooser
+            rootpath: '.'
             on_selection: text_input.text = self.selection and self.selection[0] or ''
 
         TextInput:
@@ -135,20 +139,3 @@
             Button:
                 text: "Save"
                 on_release: root.save(filechooser.path, text_input.text)
-
-
-# <MethodsDropDown>:
-#     Button:
-#         text: 'My first Item'
-#         size_hint_y: None
-#         height: 44
-#         on_release: root.select('item1')
-#     Label:
-#         text: 'Unselectable item'
-#         size_hint_y: None
-#         height: 44
-#     Button:
-#         text: 'My second Item'
-#         size_hint_y: None
-#         height: 44
-#         on_release: root.select('item2')
