@@ -1,0 +1,154 @@
+#:kivy 1.1.0
+
+<RootScreen>:
+    ImageSelectScreen:
+    DecodeScreen:
+    InsertScreen:
+
+<ImageSelectScreen>:
+    name: 'ImageSelectScreen'
+    imgbutton: imgbutton
+    
+    BoxLayout:
+        orientation: 'horizontal'
+        ImageButton:
+            id: imgbutton
+            size_hint_x: 0.7
+            source: root.manager.img
+            on_release: root.show_load();
+        
+        BoxLayout:
+            size_hint_x: 0.3
+            orientation: 'vertical'
+            Button:
+                text: 'Insert'
+                on_release:
+                    root.manager.current = 'DecodeScreen'
+                    root.manager.transition.direction = 'left'
+            Button:
+                text: 'Decode'
+                on_release:
+                    root.manager.current = 'InsertScreen'
+                    root.manager.transition.direction = 'left'
+
+<DecodeScreen>
+    name: 'DecodeScreen'
+    
+    BoxLayout:
+        Button:
+            text: 'ImageSelectScreen'
+            on_release:
+                root.manager.current = 'ImageSelectScreen'
+                root.manager.transition.direction = 'right'
+
+
+<InsertScreen>
+    name: 'InsertScreen'
+    dropdownbutton: dropdownbutton
+    coverimg: coverimg
+    stegoimg: stegoimg
+    message: message
+    key: key
+
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: 0.1
+            spacing: '500sp'
+            Button:
+                text: 'Back'
+                on_release:
+                    root.manager.current = 'ImageSelectScreen'
+                    root.manager.transition.direction = 'right'
+            Label:
+                text: 'Insert'
+
+        BoxLayout:
+            spacing: '10sp'
+            Image:
+                id: coverimg
+                source: root.manager.img
+            Image:
+                id: stegoimg
+                source: 'empty.png'
+                
+        BoxLayout:
+            spacing: '10sp'
+            size_hint_y: 0.1
+            TextInput:
+                id: message
+                hint_text: 'Text to insert'
+            TextInput:
+                id: key
+                hint_text: 'Key'
+            Button:
+                id: dropdownbutton
+                text: 'method1'
+            Button:
+                text: 'Go'
+                on_release: root.insert()
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            id: filechooser
+            rootpath: '.'
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+<SaveDialog>:
+    text_input: text_input
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            id: filechooser
+            on_selection: text_input.text = self.selection and self.selection[0] or ''
+
+        TextInput:
+            id: text_input
+            size_hint_y: None
+            height: 30
+            multiline: False
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Save"
+                on_release: root.save(filechooser.path, text_input.text)
+
+
+# <MethodsDropDown>:
+#     Button:
+#         text: 'My first Item'
+#         size_hint_y: None
+#         height: 44
+#         on_release: root.select('item1')
+#     Label:
+#         text: 'Unselectable item'
+#         size_hint_y: None
+#         height: 44
+#     Button:
+#         text: 'My second Item'
+#         size_hint_y: None
+#         height: 44
+#         on_release: root.select('item2')
