@@ -33,13 +33,46 @@
 
 <DecodeScreen>
     name: 'DecodeScreen'
-    
+    stegoimg: stegoimg
+    message: message
+    key: key
+
     BoxLayout:
-        Button:
-            text: 'ImageSelectScreen'
-            on_release:
-                root.manager.current = 'ImageSelectScreen'
-                root.manager.transition.direction = 'right'
+        orientation: 'vertical'
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: 0.1
+            spacing: '500sp'
+            Button:
+                text: 'Back'
+                on_release:
+                    root.manager.current = 'ImageSelectScreen'
+                    root.manager.transition.direction = 'right'
+            Label:
+                text: 'Decode'
+
+        BoxLayout:        
+            ImageButton:
+                id: stegoimg
+                source: root.manager.img
+                on_release: root.show_save();
+                size_hint_x: 0.7
+            BoxLayout:
+                spacing: '10sp'
+                padding: '10sp'
+                orientation: 'vertical'
+                size_hint_x: 0.3
+                TextInput:
+                    size_hint_y: 0.1
+                    id: key
+                    hint_text: 'Key'
+                TextInput:
+                    id: message
+                    hint_text: 'Decoded text'
+                Button:
+                    size_hint_y: 0.1
+                    text: 'Go'
+                    on_release: root.decode()
 
 
 <InsertScreen>

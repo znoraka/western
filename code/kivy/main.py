@@ -68,7 +68,13 @@ class MethodsDropDown(DropDown):
             self.add_widget(btn)
 
 class DecodeScreen(Screen):
-    pass
+    def on_pre_enter(self):
+        self.stegoimg.source = self.manager.img
+        self.stegoimg.reload()
+
+    def decode(self):
+        self.message.text = stego.decode(self.key.text, self.manager.img)
+
 
 class InsertScreen(Screen):
     def on_pre_enter(self):

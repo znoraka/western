@@ -72,7 +72,8 @@ def embedd(message,key,image_path,stego_path):
 def decode(key,stego_path):
     # Convert the message to bist
 
-    key_unicode = unicode(key, "utf-8")
+    # key_unicode = unicode(key, "utf-8")
+    key_unicode = key
     bits_key = '{:b}'.format(int(key_unicode.encode('utf-8').encode('hex'), 16))
     key_int = sum(map(lambda x: x[1]*(2**x[0]), enumerate(map(int, str(bits_key))[::-1]))) 
 
