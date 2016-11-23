@@ -2,7 +2,7 @@
 
 <RootScreen>:
     ImageSelectScreen:
-    SteganoScreen:
+    DecodeScreen:
     InsertScreen:
 
 <ImageSelectScreen>:
@@ -21,110 +21,63 @@
             size_hint_x: 0.3
             orientation: 'vertical'
             Button:
-                text: 'Steganographie'
+                text: 'Decode'
                 on_release:
-                    root.manager.current = 'SteganoScreen'
+                    root.manager.current = 'DecodeScreen'
                     root.manager.transition.direction = 'left'
             Button:
-                text: 'Steganalyse'
+                text: 'Insert'
                 on_release:
                     root.manager.current = 'InsertScreen'
                     root.manager.transition.direction = 'left'
 
-<SteganoScreen>
-    name: 'SteganoScreen'
+<DecodeScreen>
+    name: 'DecodeScreen'
     stegoimg: stegoimg
-    coverimg: coverimg
-    gobutton: gobutton
     message: message
     key: key
-    tabbedpanel: tabbedpanel
-    dropdownbutton: dropdownbutton
-    coverpanel: coverpanel
-    stegopanel: stegopanel
-    document: document
 
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
             orientation: 'horizontal'
-            size_hint_y: 0.08
-            spacing: '3sp'
-            padding: '3sp'
+            size_hint_y: 0.1
+            spacing: '500sp'
             Button:
                 text: 'Back'
                 on_release:
                     root.manager.current = 'ImageSelectScreen'
                     root.manager.transition.direction = 'right'
-            Button:
-                text: 'Load Cover'
-                on_release:
-                    root.custom_switch_to(root.coverpanel)
-                    root.show_load()
-            Button:
-                text: 'Load Stego'
-                on_release:
-                    root.custom_switch_to(root.stegopanel)
-                    root.show_load()
-
-            Button:
-                text: 'Save Stego'
-                on_release: root.show_save()
-                    
             Label:
-                text: 'Stegano'
+                text: 'Decode'
 
-        BoxLayout:
-            TabbedPanel:
-                id: tabbedpanel
-                do_default_tab: False
-                spacing: '10sp'
-                padding: '10sp'
-                
-                TabbedPanelItem:
-                    id: coverpanel
-                    on_press: root.custom_switch_to(self)
-                    text: 'Cover Image'
-                    Image:
-                        id: coverimg
-                        source: root.manager.img
-
-                TabbedPanelItem:
-                    id: stegopanel
-                    on_press: root.custom_switch_to(self)
-                    text: 'Stego Image'
-                    Image:
-                        id: stegoimg
-                        source: 'empty.png'
-
+        BoxLayout:        
+            ImageButton:
+                id: stegoimg
+                source: root.manager.img
+                on_release: root.show_save();
+                size_hint_x: 0.7
             BoxLayout:
                 spacing: '10sp'
                 padding: '10sp'
                 orientation: 'vertical'
-                size_hint_x: 0.4
+                size_hint_x: 0.3
                 TextInput:
-                    id: key
                     size_hint_y: 0.1
+                    id: key
                     hint_text: 'Key'
                 TextInput:
                     id: message
-                    hint_text: 'Text'
-                TextInput:
-                    id: document    
-                    size_hint_y: 0.2
+                    hint_text: 'Decoded text'
                 Button:
-                    id: dropdownbutton
                     size_hint_y: 0.1
-                    text: 'method1'
-                Button:
-                    id: gobutton    
-                    size_hint_y: 0.1
-                    text: 'Embedd'
-                    on_release: root.on_go_click()
+                    text: 'Go'
+                    on_release: root.decode()
 
 
 <InsertScreen>
     name: 'InsertScreen'
+    dropdownbutton: dropdownbutton
     coverimg: coverimg
     stegoimg: stegoimg
     message: message
@@ -165,6 +118,9 @@
             TextInput:
                 id: key
                 hint_text: 'Key'
+            Button:
+                id: dropdownbutton
+                text: 'method1'
             Button:
                 text: 'Go'
                 on_release: root.insert()

@@ -67,8 +67,7 @@ def embedd(message,key,image_path,stego_path):
     im_stego_png.save(stego_path)
     # plt.figure(2)
     # plt.imshow(im_stego)
-    # print 'embedding rate:\n',float(nb_bits+32)/(3*h*w), 'pbb\n'
-    return len(message), float(nb_bits+32)/(3*h*w)
+    print 'embedding rate:\n',float(nb_bits+32)/(3*h*w), 'pbb\n'
 
 def decode(key,stego_path):
     # Convert the message to bist
@@ -95,7 +94,7 @@ def decode(key,stego_path):
     blue_perm = blue_channel_vec[index_perm]
     #Get the message size from the first 32 bits
     nb_bits = int(str(blue_perm[:32]&1).replace('[','').replace(']','').replace(' ',''),2)
-    # print nb_bits
+    print nb_bits
     if nb_bits>h*w : nb_bits = h*w-32
     # Get the pixels encoding the message
     blue_perm = blue_perm[32:32+nb_bits]
@@ -109,7 +108,7 @@ def decode(key,stego_path):
     new_string = new_string.replace('\x00','0')
     # Do the convertion
     chars = ('%x' % int(new_string[:nb_bits], 2)).decode('hex').decode('utf-8',errors='ignore')
-    return chars, nb_bits
+    return chars
 
 
 
