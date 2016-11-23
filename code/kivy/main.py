@@ -56,6 +56,9 @@ class MethodsDropDown(DropDown):
             self.add_widget(btn)
 
 class SteganoScreen(Screen):
+    def unfocus(self):
+        self.document.focus = False
+        
     def is_cover_tab_selected(self):
         return self.tabbedpanel.current_tab.text == self.coverpanel.text
 

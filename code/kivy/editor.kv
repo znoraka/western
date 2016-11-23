@@ -11,11 +11,10 @@
     
     BoxLayout:
         orientation: 'horizontal'
-        ImageButton:
+        Image:
             id: imgbutton
             size_hint_x: 0.7
             source: root.manager.img
-            on_release: root.show_load();
         
         BoxLayout:
             size_hint_x: 0.3
@@ -72,7 +71,7 @@
                 on_release: root.show_save()
                     
             Label:
-                text: 'Stegano'
+                text: 'Steganography'
 
         BoxLayout:
             TabbedPanel:
@@ -98,8 +97,8 @@
                         source: 'empty.png'
 
             BoxLayout:
-                spacing: '10sp'
-                padding: '10sp'
+                spacing: '5sp'
+                padding: '5sp'
                 orientation: 'vertical'
                 size_hint_x: 0.4
                 TextInput:
@@ -112,6 +111,7 @@
                 TextInput:
                     id: document    
                     size_hint_y: 0.2
+                    on_focus: root.unfocus()
                 Button:
                     id: dropdownbutton
                     size_hint_y: 0.1
