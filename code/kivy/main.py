@@ -13,17 +13,29 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.tabbedpanel import TabbedPanel
 from kivy.uix.dropdown import DropDown
+from kivy.uix.slider import Slider
+from kivy.uix.scatter import Scatter
+from kivy.uix.scatterlayout import ScatterLayout
 
 from kivy.core.image import Image as CoreImage
 
+from decimal import Decimal
+import random
+
+
 import stegano_demo as stego
+import steganalysis as stega
 
 import os
 
 class ImageButton(ButtonBehavior, Image):
-    def load_image(self, source):
-        self.source = source
-        self.reload()
+    pass
+
+class ImageScatter(Scatter, Image):
+    pass
+
+class ImageViewScreen(Screen):
+    pass
 
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
@@ -65,6 +77,7 @@ class SteganoScreen(Screen):
     def set_image_source(self, image, source):
         image.source = source
         image.reload()
+        self.manager.img = source
 
     def custom_switch_to(self, tab):
         if self.tabbedpanel.current_tab.text == tab.text:
@@ -80,14 +93,11 @@ class SteganoScreen(Screen):
             self.gobutton.text = 'Embedd'
             self.tabbedpanel.switch_to(self.coverpanel)
     
-    def on_pre_enter(self):
-        self.set_image_source(self.coverimg, self.manager.img)
-
     def on_enter(self):
         self.dd = MethodsDropDown()
         self.dropdownbutton.bind(on_release=self.dd.open)
         self.dd.bind(on_select=lambda instance, x: setattr(self.dropdownbutton, 'text', x))
-        self.tabbedpanel.switch_to(self.coverpanel)
+        # self.tabbedpanel.switch_to(self.coverpanel)
 
     def on_go_click(self):
         if(len(self.key.text) == 0):
@@ -108,7 +118,7 @@ class SteganoScreen(Screen):
     def insert(self):
         length, bpp = stego.embedd(self.message.text, self.key.text, self.coverimg.source, "out.png")
         self.set_image_source(self.stegoimg, 'out.png')
-        self.document.text = "Length : " + str(length) + "\nBPP : " + str(bpp)
+        self.document.text = "Length : " + str(length) + "\nEmbedding rate : " + "{:.2E}".format(Decimal(bpp)) + " bpp"
 
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -131,6 +141,8 @@ class SteganoScreen(Screen):
         self._popup.open()
 
     def load(self, path, filename):
+        self.message.text = ''
+        self.document.text = ''
         with open(os.path.join(path, filename[0])) as stream:
             if(self.is_cover_tab_selected()):
                 self.set_image_source(self.coverimg, os.path.join(path, filename[0]))
@@ -140,16 +152,45 @@ class SteganoScreen(Screen):
         self.dismiss_popup()
 
 
-class InsertScreen(Screen):
-    def on_pre_enter(self):
-        self.coverimg.source = self.manager.img
-        self.coverimg.reload()
+class SteganalysisScreen(Screen):
+    def unfocus(self):
+        self.document.focus = False
+
+    def on_enter(self):
+        self.dd = MethodsDropDown()
+        self.dropdownbutton.bind(on_release=self.dd.open)
+        self.dd.bind(on_select=lambda instance, x: setattr(self.dropdownbutton, 'text', x))
+
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def show_load(self):
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Load file", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
+
+    def load(self, path, filename):
+        with open(os.path.join(path, filename[0])) as stream:
+            self.img.source = os.path.join(path, filename[0])
+            self.img.reload()
+                
+        self.dismiss_popup()
+
+    def analyse(self):
+        self.document.text = "Threshold : " + str(round(self.slider.value, 2)) + "\nStego : " + str(stega.detect(self.img.source, self.slider.value))
+
+    def on_go_click(self):
+        self.analyse()
+
+    def on_slider_change(self):
+        self.document.text = "Threshold : " + str(round(self.slider.value, 2))
              
 class RootScreen(ScreenManager):
     img = 'lenac.jpg'
         
 class Editor(App):
-    
+    stega.detect("out.png", 1)
     def build(self):
         return RootScreen()
 

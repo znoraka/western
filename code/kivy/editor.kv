@@ -1,9 +1,12 @@
 #:kivy 1.1.0
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
 
 <RootScreen>:
     ImageSelectScreen:
     SteganoScreen:
-    InsertScreen:
+    SteganalysisScreen:
+    ImageViewScreen:
 
 <ImageSelectScreen>:
     name: 'ImageSelectScreen'
@@ -14,7 +17,7 @@
         Image:
             id: imgbutton
             size_hint_x: 0.7
-            source: root.manager.img
+            # source: root.manager.img
         
         BoxLayout:
             size_hint_x: 0.3
@@ -27,7 +30,7 @@
             Button:
                 text: 'Steganalyse'
                 on_release:
-                    root.manager.current = 'InsertScreen'
+                    root.manager.current = 'SteganalysisScreen'
                     root.manager.transition.direction = 'left'
 
 <SteganoScreen>
@@ -84,17 +87,24 @@
                     id: coverpanel
                     on_press: root.custom_switch_to(self)
                     text: 'Cover Image'
-                    Image:
+                    ImageButton:
                         id: coverimg
                         source: root.manager.img
+                        on_release:
+                            root.manager.transition = FadeTransition()
+                            root.manager.current = 'ImageViewScreen'
 
                 TabbedPanelItem:
                     id: stegopanel
                     on_press: root.custom_switch_to(self)
                     text: 'Stego Image'
-                    Image:
+                    ImageButton:
                         id: stegoimg
                         source: 'empty.png'
+                        on_release:
+                            root.manager.transition = FadeTransition()
+                            root.manager.current = 'ImageViewScreen'
+                            root.tabbedpanel.current = root.stegopanel
 
             BoxLayout:
                 spacing: '5sp'
@@ -105,6 +115,7 @@
                     id: key
                     size_hint_y: 0.1
                     hint_text: 'Key'
+                    write_tab: False
                 TextInput:
                     id: message
                     hint_text: 'Text'
@@ -123,51 +134,84 @@
                     on_release: root.on_go_click()
 
 
-<InsertScreen>
-    name: 'InsertScreen'
-    coverimg: coverimg
-    stegoimg: stegoimg
-    message: message
-    key: key
+<SteganalysisScreen>
+    name: 'SteganalysisScreen'
+    gobutton: gobutton
+    img: img
+    slider: slider
+    dropdownbutton: dropdownbutton
+    document: document
 
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
             orientation: 'horizontal'
-            size_hint_y: 0.1
-            spacing: '500sp'
+            size_hint_y: 0.08
+            spacing: '3sp'
+            padding: '3sp'
             Button:
                 text: 'Back'
                 on_release:
                     root.manager.current = 'ImageSelectScreen'
                     root.manager.transition.direction = 'right'
-            Label:
-                text: 'Insert'
-
-        BoxLayout:
-            spacing: '10sp'
-            Image:
-                id: coverimg
-                source: root.manager.img
-
-            ImageButton:
-                id: stegoimg
-                source: root.manager.img
-                on_release: root.show_save();
-                source: 'empty.png'
-                
-        BoxLayout:
-            spacing: '10sp'
-            size_hint_y: 0.1
-            TextInput:
-                id: message
-                hint_text: 'Text to insert'
-            TextInput:
-                id: key
-                hint_text: 'Key'
             Button:
-                text: 'Go'
-                on_release: root.insert()
+                text: 'Load Image'
+                on_release:
+                    root.show_load()
+            Label:
+                text: ''
+            Label:
+                text: ''
+            Label:
+                text: 'Steganalysis'
+
+        BoxLayout:
+            Image:
+                id: img
+                source: root.manager.img
+
+            BoxLayout:
+                spacing: '5sp'
+                padding: '5sp'
+                orientation: 'vertical'
+                size_hint_x: 0.4
+                Slider:
+                    id: slider
+                    min: 0
+                    max: 1
+                    value: 0.5
+                    size_hint_y: 0.1
+                    on_value: root.on_slider_change()
+                TextInput:
+                    id: document
+                    text: "Threshold : 0.5"
+                    size_hint_y: 0.2
+                    on_focus: root.unfocus()
+                Button:
+                    id: dropdownbutton
+                    size_hint_y: 0.05
+                    text: 'method1'
+                Button:
+                    id: gobutton    
+                    size_hint_y: 0.05
+                    text: 'Detect'
+                    on_release: root.on_go_click()
+
+<ImageViewScreen>:
+    name: 'ImageViewScreen'                
+    img:img
+        # do_rotation: False
+        # x: root.width * 0.5 - self.width * 0.5
+        # y: root.height * 0.5 - self.height * 0.5
+        # scale: 1
+    ImageScatter:
+        id: img
+        do_rotation: False
+        source: root.manager.img
+        scale: 1
+        # on_release:
+        #     root.manager.current = 'SteganoScreen'
+        #     root.manager.transition = SlideTransition(direction='left')
 
 <LoadDialog>:
     BoxLayout:

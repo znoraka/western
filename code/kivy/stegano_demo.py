@@ -12,8 +12,8 @@ import random
 
 
 def embedd(message,key,image_path,stego_path):
-    print message
-    print key
+    # print message
+    # print key
         # Convert the message to bist
     # message_unicode = unicode(message, "utf-8")
     message_unicode = message
