@@ -118,7 +118,8 @@ class SteganoScreen(Screen):
     def insert(self):
         length, bpp = stego.embedd(self.message.text, self.key.text, self.coverimg.source, "out.png")
         self.set_image_source(self.stegoimg, 'out.png')
-        self.document.text = "Length : " + str(length) + "\nEmbedding rate : " + "{:.2E}".format(Decimal(bpp)) + " bpp"
+        # self.document.text = "Length : " + str(length) + "\nEmbedding rate : " + "{:.2E}".format(Decimal(bpp)) + " bpp"
+        self.document.text = "Length : " + str(length) + "\nEmbedding rate : " + str(round(bpp, 4)) + " bpp"
 
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -178,7 +179,8 @@ class SteganalysisScreen(Screen):
         self.dismiss_popup()
 
     def analyse(self):
-        self.document.text = "Threshold : " + str(round(self.slider.value, 2)) + "\nStego : " + str(stega.detect(self.img.source, self.slider.value))
+        a1, a2 = stega.detect(self.img.source, self.slider.value)
+        self.document.text = "Threshold : " + str(round(self.slider.value, 2)) + "\na1 : " + str(a1) + "\na2 : " + str(a2)
 
     def on_go_click(self):
         self.analyse()
