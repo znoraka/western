@@ -178,7 +178,7 @@ void correlationCoeff(Image& cover, Image& stego, bool horizontal, std::ostream&
     neighbors.push_back(horizontal ? samplesIndexes[i] + 1 + ((cover.m == 3)?2:0) : samplesIndexes[i] + cover.width * cover.m);
   }
 
-  // stream << "correlation cover[" << ((horizontal) ? "horizontal" : "vertical") << "] = " << rxy(samplesIndexes, neighbors, cover) << std::endl;
+  stream << "correlation cover[" << ((horizontal) ? "horizontal" : "vertical") << "] = " << rxy(samplesIndexes, neighbors, cover) << std::endl;
   stream << "correlation stego[" << ((horizontal) ? "horizontal" : "vertical") << "] = " << rxy(samplesIndexes, neighbors, stego) << std::endl;
 }
 
@@ -215,41 +215,27 @@ void histogram(Image& cover, Image& stego, std::ostream& stream) {
   }
 }
 
-// void chisquare(Image& cover, Image& stego, std::ostream& stream) {
-//   auto criticalValue = [&](std::vector<int> histo, int nbValues) {
-//     double p = 1.0 / 256.0;
-//     double sum = 0;
-//     std::vector<double> freqs;
-
-//     for(auto i : histo) {
-//       freqs.push_back(i / (double) nbValues);
-//     }
-
-//     for (int i = 0; i < 256; i++) {
-//       sum += pow(freqs[i] - p, 2) / p;
-//     }
-
-//     return sum;
-//   };
-
-//   auto p_value = [](double criticalValue) {
-//     boost::math::chi_squared mydist(255);
-//     double p = boost::math::cdf(mydist, criticalValue);
-
-//     return p;
-//   };
+void chisquare(Image& cover, Image& stego, std::ostream& stream) {
+  auto f = [](std::vector<int> histo, int nbValues) {
+    float ki2 = 0;
+    for(auto i : histo) {
+      ki2 += pow(i - nbValues / 256.0, 2) / (nbValues / 256.0);
+    }
+    return ki2;
+  };
   
-//   auto coverHisto = computeHistogram(cover);
-//   auto stegoHisto = computeHistogram(stego);
+  auto coverHisto = computeHistogram(cover);
+  auto stegoHisto = computeHistogram(stego);
 
-//   double coverCritValue = criticalValue(coverHisto, cover.data.size());
-//   stream << "critical value[cover] = " << coverCritValue << "\n";
+  double coverValue = f(coverHisto[0], cover.data.size());
+  stream << "chi2 [cover] = " << coverValue << "\n";
+  stream << "chi [cover] = " << sqrt(coverValue) << "\n";
 
-//   double stegoCritValue = criticalValue(stegoHisto, stego.data.size());
-//   stream << "critical value[stego] = " << stegoCritValue << "\n";
+  double stegoValue = f(stegoHisto[0], stego.data.size());
+  stream << "chi2 [stego] = " << stegoValue << "\n";
+  stream << "chi [stego] = " << sqrt(stegoValue) << "\n";
 
-//   stream << "chisquare[cover] = " << p_value(coverCritValue) << "\n";
-// }
+}
 
 void entropy(Image& cover, Image& stego, std::ostream& stream) {
   auto f = [](Image& image) {
@@ -271,7 +257,7 @@ void entropy(Image& cover, Image& stego, std::ostream& stream) {
     return (er + eg + eb) / 3.0;
   };
 
-  // stream << "entropy[cover] = " << f(cover) << "\n";
+  stream << "entropy[cover] = " << f(cover) << "\n";
   stream << "entropy[stego] = " << f(stego) << "\n";
 }
 
@@ -293,12 +279,12 @@ int main(int argc, char **argv) {
   psnr(cover, stego);
   npcr(cover, stego);
   uaci(cover, stego);
-  // histogram(cover, stego, histo);
+  histogram(cover, stego, histo);
   correlationCoeff(cover, stego);
   correlationCoeff(cover, stego, false);
-  // correlation(cover, stego, true, corr);
-  // correlation(cover, stego, false, corr);
-  // chisquare(cover, stego);
+  correlation(cover, stego, true, corr);
+  correlation(cover, stego, false, corr);
+  chisquare(cover, stego);
   entropy(cover, stego);
 
   corr.close();
