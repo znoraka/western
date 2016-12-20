@@ -93,6 +93,27 @@ def plot_mos_stat(db, stat, distortions):
         
     plt.savefig("mos_" + stat + ".png")
 
+def plot_distortion_mos(db, distortions):
+
+    for d in distortions:
+        plt.clf()
+        l = {}
+        # TODO filtrer les resultats aberrants
+        res = np.array(db.query("SELECT note, name FROM opinion WHERE name LIKE \"" + d + "_76%\""))
+        for r in res:
+            name = r[1].split("_")[-1]
+            l[name] = l.get(name, []) + [float(r[0])]
+            
+        t = []
+        for key, value in l.iteritems():
+            t += [[key, np.mean(np.array(value))]]
+
+        # print np.array(t)[:,1]
+        plt.ylim([0,6])
+
+        plt.plot(np.array(t)[:,1])
+        plt.savefig(d + ".png")
+
 def stats_array(db, distortions):
     stat_names = ["psnr", "entropy", "corr_horiz", "corr_vert", "uaci", "npcr"]
     mos = get_filtered_mos(db, distortions)
@@ -151,16 +172,17 @@ def main():
     # plot_psnr(db, d)
     # plt.show()
 
-    plot_mos_stat(db, "psnr", d)
-    plot_mos_stat(db, "entropy", d)
-    plot_mos_stat(db, "corr_horiz", d)
-    plot_mos_stat(db, "corr_vert", d)
-    plot_mos_stat(db, "uaci", d)
-    plot_mos_stat(db, "npcr", d)
+    # plot_mos_stat(db, "psnr", d)
+    # plot_mos_stat(db, "entropy", d)
+    # plot_mos_stat(db, "corr_horiz", d)
+    # plot_mos_stat(db, "corr_vert", d)
+    # plot_mos_stat(db, "uaci", d)
+    # plot_mos_stat(db, "npcr", d)
 
 
-    stats_array(db, d)
+    # stats_array(db, d)
 
+    plot_distortion_mos(db, d)
     # plot_psnr(db, d)
 
     # find_extremes(db, d[16])
