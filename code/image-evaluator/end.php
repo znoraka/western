@@ -27,8 +27,12 @@ if(isset($_POST['age'])) {
     }
 }
     
-histo($db, "SELECT note FROM opinion WHERE id=$id", "user.png");
-histo($db, "SELECT note FROM opinion", "all.png");
+/* histo($db, "SELECT note FROM opinion WHERE id=$id", "user.png");*/
+/* histo($db, "SELECT note FROM opinion", "all.png");*/
+
+histo2($db, "SELECT note FROM opinion WHERE id=$id", "user.png");
+histo2($db, "SELECT note FROM opinion", "all.png");
+
 ?>
 
 <div class="divhisto">

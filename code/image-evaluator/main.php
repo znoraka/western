@@ -101,7 +101,6 @@ foreach(glob("./dataset/train/*") as $v) {
  function onFormSubmit() {
      var n = $('input[name=quality]:checked', '#submit').val();
      submit(n);
-     $('input[name=quality]', '#submit').filter('[value=3]').prop('checked', true);
  }
 
  function submit(rating) {
@@ -124,6 +123,7 @@ foreach(glob("./dataset/train/*") as $v) {
 	 } else {
 	     post();
 	 }
+	 $('input[name=quality]', '#submit').filter('[value=3]').prop('checked', true);
      });
      currentImage = newImageSrc;
      $('#count').text(ratings.length + "/81");
@@ -155,6 +155,7 @@ foreach(glob("./dataset/train/*") as $v) {
      var n = parseInt(String.fromCharCode(event.which));
 
      if(!lock && (n > 0 && n < 6)) {
+	 $('input[name=quality]', '#submit').filter('[value=' + n + ']').prop('checked', true);
 	 submit(n);
      }
  });

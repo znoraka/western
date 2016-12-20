@@ -1,0 +1,1 @@
+python histo.py all.png /home/noe/Documents/dev/cdd/code/image-evaluator

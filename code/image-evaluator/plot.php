@@ -18,6 +18,17 @@ function histo($db, $sql, $imagename) {
     shell_exec("./histo.sh $imagename");
 }
 
+function histo2($db, $sql, $imagename) {
+    $s = "";
+    foreach ($db->query($sql) as $row) {
+        $s .= $row['note'] . "\n";
+    }
+
+    file_put_contents("histo2.txt", $s);
+
+    shell_exec("python histo.py $imagename");
+}
+
 function plot($data, $imagename) {
     foreach ($data as $key=>$value) {
         $s = $s . ($key + 1) . " " . $value . "\n";
