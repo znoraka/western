@@ -48,6 +48,7 @@ foreach(glob("./dataset/train/*") as $v) {
      "ac_dc_shuffle_luminance",
      "ac_dc_shuffle_xor_chrominance",
      "ac_dc_shuffle_xor_luminance",
+     "ac_dc_shuffle_xor_chrominance_luminance",
      "ac_dc_xor_chrominance",
      "ac_dc_xor_chrominance_luminance",
      "ac_dc_xor_luminance",

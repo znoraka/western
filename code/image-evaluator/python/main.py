@@ -98,8 +98,9 @@ def plot_distortion_mos(db, distortions):
     for d in distortions:
         plt.clf()
         l = {}
-        # TODO filtrer les resultats aberrants
-        res = np.array(db.query("SELECT note, name FROM opinion WHERE name LIKE \"" + d + "_76%\""))
+        res = np.sort(np.array(db.query("SELECT note, name FROM opinion WHERE name LIKE \"" + d + "_76%\"")), axis=0)
+        size = int(len(res) * 0.1)
+        res = res[size:len(res) - size]
         for r in res:
             name = r[1].split("_")[-1]
             l[name] = l.get(name, []) + [float(r[0])]
@@ -108,10 +109,9 @@ def plot_distortion_mos(db, distortions):
         for key, value in l.iteritems():
             t += [[key, np.mean(np.array(value))]]
 
-        # print np.array(t)[:,1]
         plt.ylim([0,6])
 
-        plt.plot(np.array(t)[:,1])
+        plt.plot(np.array(t)[:,1], 'o')
         plt.savefig(d + ".png")
 
 def stats_array(db, distortions):
@@ -145,6 +145,7 @@ def main():
         "ac_dc_shuffle_luminance",
         "ac_dc_shuffle_xor_chrominance",
         "ac_dc_shuffle_xor_luminance",
+        "ac_dc_shuffle_xor_chrominance_luminance",
         "ac_dc_xor_chrominance",
         "ac_dc_xor_chrominance_luminance",
         "ac_dc_xor_luminance",
@@ -172,15 +173,15 @@ def main():
     # plot_psnr(db, d)
     # plt.show()
 
-    # plot_mos_stat(db, "psnr", d)
-    # plot_mos_stat(db, "entropy", d)
-    # plot_mos_stat(db, "corr_horiz", d)
-    # plot_mos_stat(db, "corr_vert", d)
-    # plot_mos_stat(db, "uaci", d)
-    # plot_mos_stat(db, "npcr", d)
+    plot_mos_stat(db, "psnr", d)
+    plot_mos_stat(db, "entropy", d)
+    plot_mos_stat(db, "corr_horiz", d)
+    plot_mos_stat(db, "corr_vert", d)
+    plot_mos_stat(db, "uaci", d)
+    plot_mos_stat(db, "npcr", d)
 
 
-    # stats_array(db, d)
+    stats_array(db, d)
 
     plot_distortion_mos(db, d)
     # plot_psnr(db, d)
