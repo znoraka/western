@@ -19,7 +19,7 @@ def get_filtered_mos(db, distortions):
         res = np.sort(np.array(db.query("SELECT note FROM opinion WHERE name LIKE \"" + d + "_76%\"")).flatten())
         size = int(len(res) * 0.1)
         res = res[size:len(res) - size]
-        l.append([res.mean(), np.sqrt(res.var()), d])
+        l.append([float(res.mean()), np.sqrt(res.var()), d])
     return np.array(l)
 
 def get_stat(db, stat, distortions):
@@ -60,7 +60,7 @@ def plot_mos(db, distortions, plot=True):
         plt.margins(0.1)
         plt.errorbar(x, y, yerr=err, linestyle='None', marker='.')
         plt.subplots_adjust(left=0.06, bottom=0.29, right=0.95, top=0.95, wspace=0, hspace=0)
-        plt.savefig("mos.png")
+        plt.savefig("images/" + "mos.png")
 
     return l[:,2]
 
@@ -90,12 +90,16 @@ def plot_mos_stat(db, stat, distortions):
     plt.plot(mos[:,0], stats[:,0])
     for i in range(len(distortions)):
         plt.annotate(i, xy=[mos[i][0], stats[i][0]], textcoords='data')
-        
-    plt.savefig("mos_" + stat + ".png")
+
+    A = np.vstack([mos[:,0], np.ones(len(mos[:,0]))]).T
+    m, c = np.linalg.lstsq(A, stats[:,0])[0]
+    l = map(lambda x: m * x + c, range(1,6))
+    
+    plt.plot(range(1,6), l, 'r', label='Fitted line')
+    plt.savefig("images/" + "mos_" + stat + ".png")
 
 def plot_distortion_mos(db, distortions):
-
-    for d in distortions:
+   for d in distortions:
         plt.clf()
         l = {}
         res = np.sort(np.array(db.query("SELECT note, name FROM opinion WHERE name LIKE \"" + d + "_76%\"")), axis=0)
@@ -112,7 +116,7 @@ def plot_distortion_mos(db, distortions):
         plt.ylim([0,6])
 
         plt.plot(np.array(t)[:,1], 'o')
-        plt.savefig(d + ".png")
+        plt.savefig("images/" + d + ".png")
 
 def stats_array(db, distortions):
     stat_names = ["psnr", "entropy", "corr_horiz", "corr_vert", "uaci", "npcr"]
