@@ -81,6 +81,13 @@ def plot_psnr(db, distortions):
     ax.errorbar(x, y, yerr=err, linestyle='None', marker='.', color='red')
     plt.subplots_adjust(left=0.06, bottom=0.29, right=0.95, top=0.95, wspace=0, hspace=0)
 
+def distance_to_line(m, c, stats, mos):
+    l = []
+    for i in range(len(stats)):
+        l += [m * float(mos[i][0]) + c - float(stats[i][0])]
+
+    return l
+    
 def plot_mos_stat(db, stat, distortions):
     plt.clf()
     
@@ -94,6 +101,8 @@ def plot_mos_stat(db, stat, distortions):
     A = np.vstack([mos[:,0], np.ones(len(mos[:,0]))]).T
     m, c = np.linalg.lstsq(A, stats[:,0])[0]
     l = map(lambda x: m * x + c, range(1,6))
+
+    distance_to_line(m, c, stats, mos)
     
     plt.plot(range(1,6), l, 'r', label='Fitted line')
     plt.savefig("images/" + "mos_" + stat + ".png")
@@ -119,12 +128,14 @@ def plot_distortion_mos(db, distortions):
         plt.savefig("images/" + d + ".png")
 
 def stats_array(db, distortions):
-    stat_names = ["psnr", "entropy", "corr_horiz", "corr_vert", "uaci", "npcr"]
+    stat_names = ["psnr", "entropy", "corr_horiz", "corr_vert", "uaci", "npcr", "ssim", "chisquare"]
     mos = get_filtered_mos(db, distortions)
     stats = []
 
     for name in stat_names:
-        stats.append(get_stat(db, name, distortions))
+        stats += [get_stat(db, name, distortions)]
+
+    print stats
 
     s = "  index\t|  MOS\t\t|"
     for name in stat_names:
@@ -174,21 +185,22 @@ def main():
     ]
 
     d = plot_mos(db, distortions, False)
-    # plot_psnr(db, d)
-    # plt.show()
 
+    for a in zip(range(len(d)), d):
+        print a
+    
     plot_mos_stat(db, "psnr", d)
     plot_mos_stat(db, "entropy", d)
     plot_mos_stat(db, "corr_horiz", d)
     plot_mos_stat(db, "corr_vert", d)
     plot_mos_stat(db, "uaci", d)
     plot_mos_stat(db, "npcr", d)
-
+    plot_mos_stat(db, "chisquare", d)
+    plot_mos_stat(db, "ssim", d)
 
     stats_array(db, d)
 
     plot_distortion_mos(db, d)
-    # plot_psnr(db, d)
 
     # find_extremes(db, d[16])
     
