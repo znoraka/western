@@ -3,8 +3,9 @@ import numpy as np
 import random
 import math
 import matplotlib.pyplot as plt
-from scipy import signal
+import scipy
 from scipy import ndimage
+from scipy import signal
 import gauss
 from os import walk
 
@@ -79,6 +80,76 @@ def correlation(cover, stego, horiz = True):
 
     return compute_correlation(samplesIndexes, neighborsIndexes, cover), compute_correlation(samplesIndexes, neighborsIndexes, stego)
 
+def ess(cover, stego):
+        def f(x, y):
+                if(x == 0): return 0
+                return round((math.atan(float(y) / float(x)) * 57.2958 + 90) / 22.5)
+
+        def w(e1, e2):
+                if e1 == 0 or e2 == 0:
+                        return 0
+                else:
+                        return abs(math.cos(e1 * 22.5 * 0.0174533 - e2 * 22.5 * 0.0174533))
+
+        def c(e1, e2):
+                if e1 == 0 and e2 == 0:
+                        return 0
+                else:
+                        return 1
+                
+        def sobel(img):
+                img = img.astype('int32')
+                dx = ndimage.sobel(img, 0)
+                dy = ndimage.sobel(img, 1)
+                return np.vectorize(f)(dx, dy)
+
+        def directions(img):
+                def get_direction(l):
+                        h = []
+                        for a in range(9):
+                              h += [[0, a]]
+                        for i in l:
+                                h[int(i)][0] += 1
+                        return sorted(h)[-1][1]
+
+                w,h = img.shape
+                img = Image.fromarray(img.astype('uint8'))
+                l = []
+                for i in range(h / 8):
+                        for j in range(w / 8):
+                                l +=  [get_direction(np.array(img.crop((i * 8, j * 8, (i+1) * 8, (j+1) * 8))).reshape(64))]
+                return l
+
+        im1 = sobel(rgb2gray(np.array(cover)))
+        im2 = sobel(rgb2gray(np.array(stego)))
+
+        d1 = directions(im1)
+        d2 = directions(im2)
+
+        return np.vectorize(w)(d1, d2).sum() / np.vectorize(c)(d1, d2).sum()
+        
+def lss(cover, stego, alpha = 0.1, beta = 3.0, blocksize = 8):
+        cover = rgb2gray(np.array(cover))
+        stego = rgb2gray(np.array(stego))
+
+        def do_blocks(img):
+                im = Image.fromarray(img)
+                w,h = img.shape
+                a = np.asarray(im.resize((h / blocksize, w / blocksize), Image.ANTIALIAS))
+                w, h = a.shape
+                return a.reshape(w * h)
+
+        def f(x1, x2):
+                if abs(x1 - x2) < beta * 0.5:
+                        return 1
+                else:
+                        return -alpha * round(abs(x1 - x2) / beta)
+
+        im1 = do_blocks(cover)
+        im2 = do_blocks(stego)
+
+        return np.vectorize(f)(im1, im2).sum() / float(len(im1))
+        
 def ssim(cover, stego, cs_map=False):
     if not cs_map:
         cover = rgb2gray(np.array(cover)).astype(np.float64)
@@ -137,15 +208,16 @@ def create_queries(stego_path, cover_path):
     for f in files:
         im2 = Image.open(stego_path + f)
         im1 = Image.open(cover_path + f.split("_")[-1])
-        l = [psnr(im1, im2), npcr(im1, im2), uaci(im1, im2), correlation(im1, im2)[1], correlation(im1, im2, False)[1], entropy(im1, im2)[1], chisquare(im1, im2)[1], ssim(im1, im2)]
+        l = [psnr(im1, im2), npcr(im1, im2), uaci(im1, im2), correlation(im1, im2)[1], correlation(im1, im2, False)[1], entropy(im1, im2)[1], chisquare(im1, im2)[1], ssim(im1, im2), lss(im1, im2), ess(im1, im2)]
         f = "'" + f + "',"
-        print "INSERT INTO stats (image, psnr, npcr, uaci, corr_horiz, corr_vert, entropy, chisquare, ssim) VALUES (", f, ", ".join(map(lambda i: "'" + '%.5f'%i + "'", l)), ");"
+        print "INSERT INTO stats (image, psnr, npcr, uaci, corr_horiz, corr_vert, entropy, chisquare, ssim, lss, ess) VALUES (", f, ", ".join(map(lambda i: "'" + '%.5f'%i + "'", l)), ");"
         
 def main():
     # im1 = Image.open("/home/noe/Documents/dev/cdd/dataset/train/2092.jpg")
-    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_dc_shuffle_chrominance_luminance_76_2092.jpg")
-    # # im1 = Image.open("/home/noe/Downloads/Noise.jpg")
-    # # im2 = Image.open("/home/noe/Downloads/Noise.jpg")
+    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_dc_xor_chrominance_luminance_76_2092.jpg")
+    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_xor_chrominance_76_2092.jpg")
+    # im1 = Image.open("/home/noe/Downloads/Noise.jpg")
+    # im2 = Image.open("/home/noe/Downloads/Noise.jpg")
 
     # print "psnr :", psnr(im1, im2)
     # print "npcr :", npcr(im1, im2)
@@ -156,6 +228,8 @@ def main():
     # print "correlation vert:", correlation(im1, im2, False)
     # print "ssim :", ssim(im1, im2)
     # print "mssim :", mssim(im1, im2)
+    # print "lss :", lss(im1, im2)
+    # print "ess :", ess(im1, im2)
     
     create_queries("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/")
 
