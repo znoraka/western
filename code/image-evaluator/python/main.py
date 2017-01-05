@@ -88,7 +88,7 @@ def distance_to_line(m, c, stats, mos):
 
     return l
     
-def plot_mos_stat(db, stat, distortions):
+def plot_mos_stat(db, distortions, stat):
     plt.clf()
     
     stats = get_stat(db, stat, distortions)
@@ -128,14 +128,12 @@ def plot_distortion_mos(db, distortions):
         plt.savefig("images/" + d + ".png")
 
 def stats_array(db, distortions):
-    stat_names = ["psnr", "entropy", "corr_horiz", "corr_vert", "uaci", "npcr", "ssim", "chisquare"]
+    stat_names = ["psnr", "entropy", "corr_horiz", "corr_vert", "uaci", "npcr", "ssim", "lss", "ess", "chisquare"]
     mos = get_filtered_mos(db, distortions)
     stats = []
 
     for name in stat_names:
         stats += [get_stat(db, name, distortions)]
-
-    print stats
 
     s = "  index\t|  MOS\t\t|"
     for name in stat_names:
@@ -151,7 +149,30 @@ def stats_array(db, distortions):
             s += " " + str(round(float(stats[j][i][0]), 2)) + " (" + str(round(float(stats[j][i][1]), 2)) + ")\t|"
         s += "\n"
     print s
-        
+
+
+def stat_cloud(db, distortions, stat):
+    for i in range(len(distortions)):
+        plt.clf()
+        d = distortions[i]
+        l = {}
+        res = np.sort(np.array(db.query("SELECT note, name FROM opinion WHERE name LIKE \"" + d + "_76%\"")), axis=0)
+        size = int(len(res) * 0.1)
+        res = res[size:len(res) - size]
+        for r in res:
+            name = r[1].split("_")[-1]
+            l[name] = l.get(name, []) + [float(r[0])]
+            
+        t = []
+        for key, value in l.iteritems():
+            t += [[key, np.mean(np.array(value))]]
+
+        for r in t:
+            res = np.array(db.query("SELECT " + stat + " FROM stats WHERE image = \"" + d + "_76_" + r[0] + " \"")).astype(float)[0]
+            plt.plot(r[1], res[0], 'o')
+
+        plt.savefig("images/" + stat + "_" + d + ".png")
+                
 def main():
     db = sql.db()
     distortions = [
@@ -189,20 +210,22 @@ def main():
     for a in zip(range(len(d)), d):
         print a
     
-    plot_mos_stat(db, "psnr", d)
-    plot_mos_stat(db, "entropy", d)
-    plot_mos_stat(db, "corr_horiz", d)
-    plot_mos_stat(db, "corr_vert", d)
-    plot_mos_stat(db, "uaci", d)
-    plot_mos_stat(db, "npcr", d)
-    plot_mos_stat(db, "chisquare", d)
-    plot_mos_stat(db, "ssim", d)
+    plot_mos_stat(db, d, "psnr")
+    plot_mos_stat(db, d, "entropy")
+    plot_mos_stat(db, d, "corr_horiz")
+    plot_mos_stat(db, d, "corr_vert")
+    plot_mos_stat(db, d, "uaci")
+    plot_mos_stat(db, d, "npcr")
+    plot_mos_stat(db, d, "chisquare")
+    plot_mos_stat(db, d, "ssim")
+    plot_mos_stat(db, d, "lss")
+    plot_mos_stat(db, d, "ess")
 
     stats_array(db, d)
 
     plot_distortion_mos(db, d)
 
-    # find_extremes(db, d[16])
+    stat_cloud(db, d, "ssim")
     
 if __name__ == "__main__":
     main()
