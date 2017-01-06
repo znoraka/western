@@ -126,7 +126,7 @@ def ess(cover, stego):
         d1 = directions(im1)
         d2 = directions(im2)
 
-        return np.vectorize(w)(d1, d2).sum() / np.vectorize(c)(d1, d2).sum()
+        return float(np.vectorize(w)(d1, d2).sum()) / float(np.vectorize(c)(d1, d2).sum())
         
 def lss(cover, stego, alpha = 0.1, beta = 3.0, blocksize = 8):
         cover = rgb2gray(np.array(cover))
@@ -148,7 +148,7 @@ def lss(cover, stego, alpha = 0.1, beta = 3.0, blocksize = 8):
         im1 = do_blocks(cover)
         im2 = do_blocks(stego)
 
-        return np.vectorize(f)(im1, im2).sum() / float(len(im1))
+        return float(np.vectorize(f)(im1, im2).sum()) / float(len(im1))
         
 def ssim(cover, stego, cs_map=False):
     if not cs_map:
@@ -213,8 +213,8 @@ def create_queries(stego_path, cover_path):
         print "INSERT INTO stats (image, psnr, npcr, uaci, corr_horiz, corr_vert, entropy, chisquare, ssim, lss, ess) VALUES (", f, ", ".join(map(lambda i: "'" + '%.5f'%i + "'", l)), ");"
         
 def main():
-    # im1 = Image.open("/home/noe/Documents/dev/cdd/dataset/train/2092.jpg")
-    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_dc_xor_chrominance_luminance_76_2092.jpg")
+    # im1 = Image.open("/home/noe/Documents/dev/cdd/dataset/train/118020.jpg")
+    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_dc_shuffle_chrominance_76_118020.jpg")
     # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_xor_chrominance_76_2092.jpg")
     # im1 = Image.open("/home/noe/Downloads/Noise.jpg")
     # im2 = Image.open("/home/noe/Downloads/Noise.jpg")
