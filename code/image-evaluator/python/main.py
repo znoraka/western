@@ -6,12 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sets import Set
 from PIL import Image
-import re
-
 sys.path.insert(0, '/home/noe/Documents/dev/test/')
 import sql
-
-regex = re.compile(r'[^\d.]+')
 
 def get_filtered_mos(db, distortions):
     l = []
@@ -25,8 +21,7 @@ def get_filtered_mos(db, distortions):
 def get_stat(db, stat, distortions):
     stats = []
     for d in distortions:
-        f = lambda x: float(regex.sub('', x))
-        res = np.array(map(f, np.array(db.query("SELECT " + stat + " FROM stats WHERE image LIKE \"" + d + "_76%\"")).flatten()))
+        res = np.array(map(float, np.array(db.query("SELECT " + stat + " FROM stats WHERE image LIKE \"" + d + "_76%\"")).flatten()))
         stats.append([res.mean(), np.sqrt(res.var()), d])
     return np.array(stats)
 
