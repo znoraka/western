@@ -17,7 +17,7 @@
 %
 % Single address.
 % ---------------
-\name{Author(s) Name(s)\thanks{Thanks to XYZ agency for funding.}}
+\name{Author(s) Name(s)}
 \address{Author Affiliation(s)}
 %
 % For example:
@@ -88,7 +88,7 @@ We give a quick overview of a few selected metrics. For a more in-depth review, 
 \label{sec:dataset}
 The cryptocompression method we use is targeted towards JPEG images. We have six parameters that we can enable or not to generate a cryptocompressed image. \textit{Shuffle} and \textit{xor} are the parameters that decide de actual encryption method. \textit{AC} and \textit{DC} control which part of the DCT will be encrypted and two additionnal parameters, \textit{chrominance} and \textit{luminance} decide which of the luminance, chrominance (or both) DCT coefficients will be encrypted. As there must be at least one encryption method, at least one type of coefficient, and chrominance or luminance selected, we have a total of 27 different distortions.
 
-\textbf{Explain shuffle and xor and maybe link Vincent's paper}. We use the training images from the BSDS500 \cite{bsds500} dataset as our input images for a total of $27 * 200 = 5400$ cryptocompressed images.
+\textit{Explain shuffle and xor and maybe link Vincent's paper}. We use the training images from the BSDS500 \cite{bsds500} dataset as our input images for a total of $27 * 200 = 5400$ cryptocompressed images.
 
 The 27 distortions are given in Annex \ref{ann:distortions}, they are named according to the parameters enabled and are sorted by MOS, as explained in Section \ref{sec:evaluation}, they are later designated by their number for ease of use.
 
@@ -101,7 +101,7 @@ We had a total of \textit{N} different person do the evaluation. They had to giv
 \textbf{4 :} The distortion is slightly annoying, but the content is clear\\
 \textbf{5 :} The distortion is not annoying at all \\
 
-They had to rate 81 images, three for every distortion, the sessions were 10 to 15 minutes long, depending on the person. Each image was seen at most once by the user, to prevent them from recognising it giving it a higher score. The distortions order was shuffled differently for every evaluation and repeated three times in the same order. We chose to have every distortion rated three times because during our preliminary tests, we saw that for the first few images, the user was not confident on the score to give to an image, confidence that improved as they saw more images and distortion. It allowed us to filter the outliers caused by the learing curve while still having a good amount of rating.
+They had to rate 81 images, three for every distortion, the sessions were 10 to 15 minutes long, depending on the person. Each image was seen at most once by the user, to prevent them from recognising it and give it a higher score. The distortions order was shuffled differently for every evaluation and repeated three times in the same order. We chose to have every distortion rated three times because during our preliminary tests, we saw that for the first few images, the user was not confident on the score to give to an image, confidence that improved as they saw more images and distortion. It allowed us to filter the outliers caused by the learning curve while still having a good amount of rating.
 
 The images were evaluated in a dim room, on a \textit{details of the screen} screen, about $n$ meters away and around eyes level. The user could only see one image at a time, a new image shown once the previous had been rated.
 The MOS obtained during the evaluation are given Fig. \ref{fig:mos}. The name of the distortions are given in Annex \ref{ann:distortions}. We can see that after distortions $17$, the MOS get marginally better, this is due to the absence of the parameter $luminance$, the $shuffle$ and $xor$ are only performed on the chrominance, hence the better ratings.
@@ -109,62 +109,112 @@ The MOS obtained during the evaluation are given Fig. \ref{fig:mos}. The name of
 \begin{figure}[ht]
   \centering
   \includegraphics[width=8.5cm]{figures/mos}
+  \vspace{-5mm}
   \caption{MOS for the 27 distortions.\label{fig:mos} }
 \end{figure}
 
-Our goal is to predict the rating a human would give to an image. In the best case scenario, a metric would be totally correlated with human rating and could be used to completely replace humans in image evaluation, this is however not the case, at least not for the metrics we selected, as shown in figures \ref{fig:psnr},\ref{fig:ssim},\ref{fig:ess},\ref{fig:lss},\ref{fig:npcr},\ref{fig:uaci},\ref{fig:entropy},\ref{fig:correlation}.
+Our goal is to predict the rating a human would give to an image. In the best case scenario, a metric would be totally correlated with human rating and could be used to completely replace humans in image evaluation, this is however not the case, at least not for the metrics we selected, as shown in figures \ref{fig:psnr} and \ref{fig:ssim}. Detailed results are available Table \ref{fig:table}
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=8.5cm]{figures/mos_psnr}
-  \caption{MOS on x-axis and PSNR on y-axis\label{fig:psnr} }
+  \vspace{-5mm}
+  \caption{MOS on the x-axis and PSNR on the y-axis\label{fig:psnr} }
 \end{figure}
+
 \begin{figure}[ht]
   \centering
   \includegraphics[width=8.5cm]{figures/mos_ssim}
-  \caption{MOS on x-axis and SSIM on y-axis\label{fig:ssim} }
+  \caption{MOS on the x-axis and SSIM on the y-axis\label{fig:ssim} }
+  \vspace{-5mm}
 \end{figure}
+% \begin{figure}[ht]
+%   \centering
+%   \includegraphics[width=8.5cm]{figures/mos_ess}
+%   \caption{MOS on the x-axis and ESS on the y-axis\label{fig:ess} }
+% \end{figure}
+% \begin{figure}[ht]
+%   \centering
+%   \includegraphics[width=8.5cm]{figures/mos_lss}
+%   \caption{MOS on the x-axis and LSS on the y-axis\label{fig:lss} }
+% \end{figure}
+% \begin{figure}[ht]
+%   \centering
+%   \includegraphics[width=8.5cm]{figures/mos_npcr}
+%   \caption{MOS on the x-axis and NCPR on the y-axis\label{fig:npcr} }
+% \end{figure}
+% \begin{figure}[ht]
+%   \centering
+%   \includegraphics[width=8.5cm]{figures/mos_uaci}
+%   \caption{MOS on the x-axis and UACI on the y-axis\label{fig:uaci} }
+% \end{figure}
+% \begin{figure}[ht]
+%   \centering
+%   \includegraphics[width=8.5cm]{figures/mos_entropy}
+%   \caption{MOS on the x-axis and entropy on the y-axis\label{fig:entropy} }
+% \end{figure}
+% \begin{figure}[ht]
+%   \centering
+%   \includegraphics[width=8.5cm]{figures/mos_corr_horiz}
+%   \caption{MOS on the x-axis and horizontal correlation on the y-axis\label{fig:correlation} }
+% \end{figure}
+
+As we can se from these figures, most metrics actually follow a rough line, but distortions $5$ to $17$ are problematic and prevent us from predicting the MOS. These distortions also happen to be between a MOS of 2 and 3, where the threshold for a confidential image would be. Even the SSIM, which is the most accurate metric in our experiment, fails to predict the MOS, as shown in Fig.~\ref{fig:ssim_detail_11}. The SSIM ranges from 0 to 1, and from Fig.~\ref{fig:ssim_detail_11}, we can see that for the same MOS the SSIM goes across almost all its range. A similar behavior is seen for the other metrics. Table~\ref{fig:table} summarizes our results.
+
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=8.5cm]{figures/mos_ess}
-  \caption{MOS on x-axis and ESS on y-axis\label{fig:ess} }
+  \includegraphics[width=8.5cm]{figures/ssim_detail_11}
+  \caption{Details of the MOS on the x-axis and the SSIM on the y-axis for the $11^{th}$ distortion \label{fig:ssim_detail_11} }
 \end{figure}
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=8.5cm]{figures/mos_lss}
-  \caption{MOS on x-axis and LSS on y-axis\label{fig:lss} }
-\end{figure}
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=8.5cm]{figures/mos_npcr}
-  \caption{MOS on x-axis and NCPR on y-axis\label{fig:npcr} }
-\end{figure}
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=8.5cm]{figures/mos_uaci}
-  \caption{MOS on x-axis and UACI on y-axis\label{fig:uaci} }
-\end{figure}
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=8.5cm]{figures/mos_entropy}
-  \caption{MOS on x-axis and entropy on y-axis\label{fig:entropy} }
-\end{figure}
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=8.5cm]{figures/mos_corr_horiz}
-  \caption{MOS on x-axis and horizontal correlation on y-axis\label{fig:correlation} }
-\end{figure}
+
+  \begin{table*}[ht]
+    \centering
+    \scalebox{0.8}{
+      \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+  index	&  MOS		&  psnr		&  entropy	&  corr\_horiz	&  corr\_vert	&  uaci		&  npcr		&  ssim		&  lss		&  ess		\\ \hline 
+0	& 1.0 (0.0)	& 11.45 (2.72)	& 7.31 (0.39)	& 0.82 (0.05)	& 0.82 (0.05)	& 21.99 (6.42)	& 99.05 (0.73)	& 0.09 (0.07)	& -1.43 (0.52)	& 0.56 (0.2)	\\ \hline 
+1	& 1.0 (0.0)	& 9.02 (1.93)	& 7.69 (0.16)	& 0.84 (0.04)	& 0.84 (0.04)	& 29.32 (6.34)	& 99.46 (0.18)	& 0.06 (0.04)	& -1.88 (0.57)	& 0.56 (0.19)	\\ \hline 
+2	& 1.17 (0.38)	& 11.79 (2.82)	& 7.31 (0.39)	& 0.82 (0.05)	& 0.82 (0.05)	& 21.19 (6.46)	& 98.84 (1.19)	& 0.09 (0.07)	& -1.43 (0.52)	& 0.56 (0.2)	\\ \hline 
+3	& 1.2 (0.4)	& 9.79 (2.38)	& 7.62 (0.23)	& 0.83 (0.04)	& 0.83 (0.05)	& 27.03 (6.75)	& 99.31 (0.38)	& 0.06 (0.04)	& -1.88 (0.57)	& 0.57 (0.19)	\\ \hline 
+4	& 1.35 (0.51)	& 8.97 (1.97)	& 7.7 (0.19)	& 0.84 (0.04)	& 0.84 (0.04)	& 27.33 (6.32)	& 99.09 (0.31)	& 0.12 (0.09)	& -1.6 (0.57)	& 0.62 (0.2)	\\ \hline 
+5	& 1.82 (0.67)	& 9.76 (2.42)	& 7.6 (0.27)	& 0.83 (0.05)	& 0.83 (0.04)	& 24.22 (6.68)	& 98.46 (0.95)	& 0.12 (0.09)	& -1.6 (0.57)	& 0.63 (0.19)	\\ \hline 
+6	& 2.02 (0.78)	& 18.46 (3.04)	& 7.3 (0.41)	& 0.87 (0.07)	& 0.88 (0.07)	& 9.12 (3.17)	& 96.41 (3.52)	& 0.23 (0.12)	& 0.16 (0.2)	& 0.58 (0.18)	\\ \hline 
+7	& 2.08 (0.58)	& 9.63 (2.14)	& 7.69 (0.18)	& 0.86 (0.03)	& 0.86 (0.03)	& 27.3 (6.51)	& 99.35 (0.23)	& 0.33 (0.13)	& -1.84 (0.55)	& 0.73 (0.16)	\\ \hline 
+8	& 2.24 (0.73)	& 18.99 (3.09)	& 7.27 (0.42)	& 0.89 (0.06)	& 0.89 (0.06)	& 8.57 (3.02)	& 96.24 (3.59)	& 0.25 (0.13)	& 0.18 (0.2)	& 0.58 (0.19)	\\ \hline 
+9	& 2.32 (0.59)	& 12.47 (3.03)	& 7.3 (0.4)	& 0.83 (0.04)	& 0.84 (0.04)	& 19.59 (6.28)	& 98.76 (0.9)	& 0.42 (0.14)	& -1.38 (0.51)	& 0.74 (0.16)	\\ \hline 
+10	& 2.37 (0.63)	& 18.71 (3.13)	& 7.28 (0.42)	& 0.87 (0.07)	& 0.87 (0.07)	& 8.84 (3.19)	& 95.83 (4.29)	& 0.23 (0.12)	& 0.16 (0.2)	& 0.58 (0.18)	\\ \hline 
+11	& 2.42 (0.68)	& 18.5 (3.03)	& 7.18 (0.48)	& 0.87 (0.07)	& 0.88 (0.07)	& 7.74 (2.99)	& 93.26 (5.3)	& 0.38 (0.16)	& 0.34 (0.22)	& 0.65 (0.18)	\\ \hline 
+12	& 2.47 (0.5)	& 9.58 (2.17)	& 7.7 (0.2)	& 0.86 (0.03)	& 0.86 (0.03)	& 24.47 (6.36)	& 98.47 (0.5)	& 0.43 (0.14)	& -1.54 (0.57)	& 0.74 (0.15)	\\ \hline 
+13	& 2.57 (0.61)	& 10.52 (2.67)	& 7.6 (0.25)	& 0.85 (0.03)	& 0.85 (0.03)	& 24.89 (6.89)	& 99.04 (0.5)	& 0.33 (0.13)	& -1.84 (0.55)	& 0.73 (0.15)	\\ \hline 
+14	& 2.58 (0.72)	& 19.24 (3.17)	& 7.26 (0.43)	& 0.89 (0.06)	& 0.89 (0.06)	& 8.31 (3.03)	& 95.67 (4.37)	& 0.25 (0.13)	& 0.18 (0.2)	& 0.58 (0.18)	\\ \hline 
+15	& 2.7 (0.46)	& 18.75 (3.11)	& 7.16 (0.49)	& 0.87 (0.07)	& 0.88 (0.07)	& 7.4 (2.99)	& 91.91 (6.31)	& 0.38 (0.16)	& 0.34 (0.22)	& 0.66 (0.18)	\\ \hline 
+16	& 2.79 (0.52)	& 12.84 (3.13)	& 7.28 (0.41)	& 0.84 (0.04)	& 0.84 (0.04)	& 18.76 (6.29)	& 98.31 (1.48)	& 0.42 (0.14)	& -1.38 (0.51)	& 0.75 (0.15)	\\ \hline 
+17	& 2.9 (0.43)	& 10.5 (2.71)	& 7.59 (0.29)	& 0.85 (0.03)	& 0.85 (0.03)	& 20.78 (6.65)	& 96.08 (1.75)	& 0.43 (0.14)	& -1.54 (0.57)	& 0.74 (0.15)	\\ \hline 
+18	& 4.0 (0.31)	& 18.77 (3.9)	& 7.35 (0.37)	& 0.94 (0.04)	& 0.94 (0.04)	& 7.91 (3.4)	& 93.51 (3.95)	& 1.0 (0.01)	& 0.95 (0.08)	& 0.86 (0.1)	\\ \hline 
+19	& 4.02 (0.34)	& 19.11 (4.1)	& 7.38 (0.35)	& 0.94 (0.04)	& 0.94 (0.04)	& 8.6 (3.72)	& 95.79 (3.12)	& 0.99 (0.01)	& 0.93 (0.1)	& 0.86 (0.1)	\\ \hline 
+20	& 4.03 (0.36)	& 18.79 (3.93)	& 7.39 (0.34)	& 0.94 (0.04)	& 0.94 (0.04)	& 8.9 (3.74)	& 96.2 (2.89)	& 0.99 (0.01)	& 0.92 (0.1)	& 0.86 (0.1)	\\ \hline 
+21	& 4.03 (0.37)	& 19.08 (4.08)	& 7.34 (0.38)	& 0.94 (0.04)	& 0.94 (0.04)	& 7.48 (3.33)	& 91.2 (4.87)	& 1.0 (0.01)	& 0.95 (0.07)	& 0.86 (0.1)	\\ \hline 
+22	& 4.24 (0.46)	& 23.42 (4.04)	& 7.21 (0.44)	& 0.93 (0.05)	& 0.93 (0.05)	& 5.17 (2.26)	& 93.73 (3.84)	& 1.0 (0.01)	& 0.94 (0.08)	& 0.86 (0.1)	\\ \hline 
+23	& 4.31 (0.46)	& 24.2 (4.26)	& 7.21 (0.45)	& 0.93 (0.05)	& 0.93 (0.05)	& 4.75 (2.18)	& 92.69 (4.34)	& 1.0 (0.01)	& 0.95 (0.07)	& 0.86 (0.09)	\\ \hline 
+24	& 4.75 (0.43)	& 31.54 (3.66)	& 7.12 (0.5)	& 0.93 (0.05)	& 0.93 (0.05)	& 1.57 (0.7)	& 75.75 (10.71)	& 1.0 (0.0)	& 0.99 (0.03)	& 0.87 (0.09)	\\ \hline 
+25	& 4.82 (0.38)	& 31.48 (3.71)	& 7.14 (0.48)	& 0.93 (0.05)	& 0.93 (0.05)	& 1.84 (0.83)	& 81.63 (9.59)	& 1.0 (0.0)	& 0.98 (0.04)	& 0.86 (0.1)	\\ \hline 
+26	& 4.83 (0.37)	& 32.06 (3.75)	& 7.13 (0.49)	& 0.93 (0.05)	& 0.93 (0.05)	& 1.72 (0.79)	& 80.68 (10.02)	& 1.0 (0.0)	& 0.99 (0.03)	& 0.86 (0.1)	\\ \hline 
+      \end{tabular}
+    }
+        \caption{Results for the 27 distortions \label{fig:table}}
+    \end{table*}
 \section{REFERENCES}
 \label{sec:ref}
 
-List and number all bibliographical references at the end of the
-paper. The references can be numbered in alphabetic order or in
-order of appearance in the document. When referring to them in
-the text, type the corresponding reference number in square
-brackets as shown at the end of this sentence \cite{C2}. An
-additional final page (the fifth page, in most cases) is
-allowed, but must contain only references to the prior
-literature.
+% List and number all bibliographical references at the end of the
+% paper. The references can be numbered in alphabetic order or in
+% order of appearance in the document. When referring to them in
+% the text, type the corresponding reference number in square
+% brackets as shown at the end of this sentence \cite{C2}. An
+% additional final page (the fifth page, in most cases) is
+% allowed, but must contain only references to the prior
+% literature.
 
 % References should be produced using the bibtex program from suitable
 % BiBTeX files (here: strings, refs, manuals). The IEEEbib.bst bibliography
