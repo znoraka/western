@@ -4,6 +4,7 @@
 % --------------------------------------------------------------------------
 \documentclass{article}
 \usepackage{spconf,amsmath,graphicx}
+\usepackage{pbox}
 
 % Example definitions.
 % --------------------
@@ -59,157 +60,100 @@ One, two, three, four, five
 %
 \section{Introduction}
 \label{sec:intro}
-More and more content is being shared everyday on the internet. Most of this content is trivial and does not need to be encrypted. Some of it however needs to be securely transfered, the problem of encryption arises. Full encryption with methods such as AES for exemple are often not needed in addition to not being possible due to computing power constraints. Instead, partial or selective encryption is used, where the goal is sufficient encryption. That is, the image is sufficently distorted and an attacker is not able to access the content. This distortion can be of varying magnitude, a strong distortion for exemple for DRM, or a lighter distortion, where the content is still recognizable to attract the viewers interest. \textit{TODO : encryption state of the art}. When an image is intented to be consumed by a human, the most accurate measure of its confidentiality is a Mean Opinion Score, where acte people rate the image. It is however not a realistic way to rate the distortion of an image as it is way to expensive and time consuming, security and quality metrics were introduced as a means to automate the process. 
+More and more content is being shared everyday on the internet. Most of this content is trivial and does not need to be encrypted. Some of it however needs to be securely transfered, the problem of encryption arises. Full encryption with methods such as AES for exemple are often not needed in addition to not being possible due to computing power constraints. Instead, partial or selective encryption is used, where the goal is sufficient encryption. That is, the image is sufficently distorted and an attacker is not able to access the content. This distortion can be of varying magnitude, a strong distortion for exemple for DRM, or a lighter distortion, where the content is still recognizable to attract the viewers interest. \textit{TODO : encryption state of the art}.
 
-% As it often useless to use traditionnal encryption method such as DES or AES for exemple on visual content, as well as not always possible due to computing power constraints, we use encryption methods specifically devised for visual content. The idea is that when an image is sufficiently distorted, its content is protected. Our end goal in is to automatically rate an image level of protection, and to decide whether its content is confidential. We focus on JPEG images as it is the most widely used lossy compression standard. Metrics such as PSNR, entropy, or even SSIM are often used as benchmarks for visual content confidentiality \cite{vsm_deficits}. Such metrics however are designed for high quality image, and lack consistency in the low end of Mean Opinion Scores \cite{vsm_deficits}.
+  When an image is intented to be consumed by a human, the most accurate measure of its confidentiality is a Mean Opinion Score, where actual people rate the image. It is however not a realistic way to rate the distortion of an image as it is way to expensive and time consuming, security and quality metrics were introduced as a means to automate the process.
+
+According to \cite{metrics_deficits}, there is not yet a security metric that consistently rates images across all the MOS spectrum. Most quality metrics fail to predict a MOS on low quality images, precisely where it would be most important to do so : decide whether an image is confidential.
+
+We give a quick overview of a few selected metrics. For a more in-depth review, we refer the reader to \cite{metrics_deficits}.
+
+\textbf{PSNR :} Even though it is known that the PSNR is not well correlated with human judgment, it is still widely used due to its speed and ease of use. The range is [0, $+\infty$], where two identical images would have a PSNR of $+\infty$.
+
+\textbf{SSIM :} \cite{ssim}(Structural Similarity Index Measure). A luminance score, au contrast score and a structure score are combined to obtain the actual SSIM score. It has a range of [0;1] where identical images have a score of 1.
+
+\textbf{ESS :} \cite{ess_lss}(Edge Similarity Score). It uses non overlapping 8x8 block directions to compare images. With the range [0;1], a higher score reflects a less distorted image.
+
+\textbf{LSS :} \cite{ess_lss}(Luminance Similarity Score). It uses non overlapping 8x8 block average luminance to compare images. With the range [-8.5, 1] for default parameters of $\alpha=0.1$ and $\beta=3$, a higher score reflects a less distorted image.
+
+\textbf{NPCR :} \cite{npcr_uaci}It is the number of pixel changes between images. Its range is [0,100], where a fully encrypted image has a NPCR close to 100, where almost all the pixels changed.
+
+\textbf{UACI :} \cite{npcr_uaci}It is the unified averaged changed intensity. It is the average intensity difference between two images. Its range is [0,100], where a fully encrypted image has a value close to 33.
+
+\textbf{Entropy :} It is the amount of information in an image, for an 8-bit image, so an entropy of 8 would be the target for a full encryption method. It ranges from 0 to 8 in this case.
+
+\textbf{Correlation :} The correlation coefficient ranges from 0 to 1, it is the average correlation of adjacent pixels in an image, where a natural image would be highly correlated and a fully encrypted image would have low correlation.
 
 \section{Creating the dataset}
 \label{sec:dataset}
 The cryptocompression method we use is targeted towards JPEG images. We have six parameters that we can enable or not to generate a cryptocompressed image. \textit{Shuffle} and \textit{xor} are the parameters that decide de actual encryption method. \textit{AC} and \textit{DC} control which part of the DCT will be encrypted and two additionnal parameters, \textit{chrominance} and \textit{luminance} decide which of the luminance, chrominance (or both) DCT coefficients will be encrypted. As there must be at least one encryption method, at least one type of coefficient, and chrominance or luminance selected, we have a total of 27 different distortions.
+
 \textbf{Explain shuffle and xor and maybe link Vincent's paper}. We use the training images from the BSDS500 \cite{bsds500} dataset as our input images for a total of $27 * 200 = 5400$ cryptocompressed images.
 
-\section{PAGE TITLE SECTION}
-\label{sec:pagestyle}
+The 27 distortions are given in Annex \ref{ann:distortions}, they are named according to the parameters enabled and are sorted by MOS, as explained in Section \ref{sec:evaluation}, they are later designated by their number for ease of use.
 
-The paper title (on the first page) should begin 1.38 inches (35 mm) from the
-top edge of the page, centered, completely capitalized, and in Times 14-point,
-boldface type.  The authors' name(s) and affiliation(s) appear below the title
-in capital and lower case letters.  Papers with multiple authors and
-affiliations may require two or more lines for this information. Please note
-that papers should not be submitted blind; include the authors' names on the
-PDF.
+\section{Image evaluation}
+\label{sec:evaluation}
+We had a total of \textit{N} different person do the evaluation. They had to give a score from 1 to 5 to the images, where 5 is the best score and 1 is the worst, presented as follows :\\\\
+\textbf{1 :} The distortion is unbearable, nothing is visible\\
+\textbf{2 :} \small{The distortion is very annoying, I can barely guess the content}\normalsize{}\\
+\textbf{3 :} The distortion is annoying, but I can see the content\\
+\textbf{4 :} The distortion is slightly annoying, but the content is clear\\
+\textbf{5 :} The distortion is not annoying at all \\
 
-\section{TYPE-STYLE AND FONTS}
-\label{sec:typestyle}
+They had to rate 81 images, three for every distortion, the sessions were 10 to 15 minutes long, depending on the person. Each image was seen at most once by the user, to prevent them from recognising it giving it a higher score. The distortions order was shuffled differently for every evaluation and repeated three times in the same order. We chose to have every distortion rated three times because during our preliminary tests, we saw that for the first few images, the user was not confident on the score to give to an image, confidence that improved as they saw more images and distortion. It allowed us to filter the outliers caused by the learing curve while still having a good amount of rating.
 
-To achieve the best rendering both in printed proceedings and electronic proceedings, we
-strongly encourage you to use Times-Roman font.  In addition, this will give
-the proceedings a more uniform look.  Use a font that is no smaller than nine
-point type throughout the paper, including figure captions.
+The images were evaluated in a dim room, on a \textit{details of the screen} screen, about $n$ meters away and around eyes level. The user could only see one image at a time, a new image shown once the previous had been rated.
+The MOS obtained during the evaluation are given Fig. \ref{fig:mos}. The name of the distortions are given in Annex \ref{ann:distortions}. We can see that after distortions $17$, the MOS get marginally better, this is due to the absence of the parameter $luminance$, the $shuffle$ and $xor$ are only performed on the chrominance, hence the better ratings.
 
-In nine point type font, capital letters are 2 mm high.  {\bf If you use the
-smallest point size, there should be no more than 3.2 lines/cm (8 lines/inch)
-vertically.}  This is a minimum spacing; 2.75 lines/cm (7 lines/inch) will make
-the paper much more readable.  Larger type sizes require correspondingly larger
-vertical spacing.  Please do not double-space your paper.  TrueType or
-Postscript Type 1 fonts are preferred.
-
-The first paragraph in each section should not be indented, but all the
-following paragraphs within the section should be indented as these paragraphs
-demonstrate.
-
-\section{MAJOR HEADINGS}
-\label{sec:majhead}
-
-Major headings, for example, "1. Introduction", should appear in all capital
-letters, bold face if possible, centered in the column, with one blank line
-before, and one blank line after. Use a period (".") after the heading number,
-not a colon.
-
-\subsection{Subheadings}
-\label{ssec:subhead}
-
-Subheadings should appear in lower case (initial word capitalized) in
-boldface.  They should start at the left margin on a separate line.
- 
-\subsubsection{Sub-subheadings}
-\label{sssec:subsubhead}
-
-Sub-subheadings, as in this paragraph, are discouraged. However, if you
-must use them, they should appear in lower case (initial word
-capitalized) and start at the left margin on a separate line, with paragraph
-text beginning on the following line.  They should be in italics.
-
-\section{PRINTING YOUR PAPER}
-\label{sec:print}
-
-Print your properly formatted text on high-quality, 8.5 x 11-inch white printer
-paper. A4 paper is also acceptable, but please leave the extra 0.5 inch (12 mm)
-empty at the BOTTOM of the page and follow the top and left margins as
-specified.  If the last page of your paper is only partially filled, arrange
-the columns so that they are evenly balanced if possible, rather than having
-one long column.
-
-In LaTeX, to start a new column (but not a new page) and help balance the
-last-page column lengths, you can use the command ``$\backslash$pagebreak'' as
-demonstrated on this page (see the LaTeX source below).
-
-\section{PAGE NUMBERING}
-\label{sec:page}
-
-Please do {\bf not} paginate your paper.  Page numbers, session numbers, and
-conference identification will be inserted when the paper is included in the
-proceedings.
-
-\section{ILLUSTRATIONS, GRAPHS, AND PHOTOGRAPHS}
-\label{sec:illust}
-
-Illustrations must appear within the designated margins.  They may span the two
-columns.  If possible, position illustrations at the top of columns, rather
-than in the middle or at the bottom.  Caption and number every illustration.
-All halftone illustrations must be clear black and white prints.  Colors may be
-used, but they should be selected so as to be readable when printed on a
-black-only printer.
-
-Since there are many ways, often incompatible, of including images (e.g., with
-experimental results) in a LaTeX document, below is an example of how to do
-this \cite{Lamp86}.
-
-\section{FOOTNOTES}
-\label{sec:foot}
-
-Use footnotes sparingly (or not at all!) and place them at the bottom of the
-column on the page on which they are referenced. Use Times 9-point type,
-single-spaced. To help your readers, avoid using footnotes altogether and
-include necessary peripheral observations in the text (within parentheses, if
-you prefer, as in this sentence).
-
-% Below is an example of how to insert images. Delete the ``\vspace'' line,
-% uncomment the preceding line ``\centerline...'' and replace ``imageX.ps''
-% with a suitable PostScript file name.
-% -------------------------------------------------------------------------
-\begin{figure}[htb]
-
-\begin{minipage}[b]{1.0\linewidth}
+\begin{figure}[ht]
   \centering
-  \centerline{\includegraphics[width=8.5cm]{image1}}
-%  \vspace{2.0cm}
-  \centerline{(a) Result 1}\medskip
-\end{minipage}
-%
-\begin{minipage}[b]{.48\linewidth}
-  \centering
-  \centerline{\includegraphics[width=4.0cm]{image3}}
-%  \vspace{1.5cm}
-  \centerline{(b) Results 3}\medskip
-\end{minipage}
-\hfill
-\begin{minipage}[b]{0.48\linewidth}
-  \centering
-  \centerline{\includegraphics[width=4.0cm]{image4}}
-%  \vspace{1.5cm}
-  \centerline{(c) Result 4}\medskip
-\end{minipage}
-%
-\caption{Example of placing a figure with experimental results.}
-\label{fig:res}
-%
+  \includegraphics[width=8.5cm]{figures/mos}
+  \caption{MOS for the 27 distortions.\label{fig:mos} }
 \end{figure}
 
+Our goal is to predict the rating a human would give to an image. In the best case scenario, a metric would be totally correlated with human rating and could be used to completely replace humans in image evaluation, this is however not the case, at least not for the metrics we selected, as shown in figures \ref{fig:psnr},\ref{fig:ssim},\ref{fig:ess},\ref{fig:lss},\ref{fig:npcr},\ref{fig:uaci},\ref{fig:entropy},\ref{fig:correlation}.
 
-% To start a new column (but not a new page) and help balance the last-page
-% column length use \vfill\pagebreak.
-% -------------------------------------------------------------------------
-%\vfill
-%\pagebreak
-
-\section{COPYRIGHT FORMS}
-\label{sec:copyright}
-
-You must include your fully completed, signed IEEE copyright release form when
-form when you submit your paper. We {\bf must} have this form before your paper
-can be published in the proceedings.
-
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=8.5cm]{figures/mos_psnr}
+  \caption{MOS on x-axis and PSNR on y-axis\label{fig:psnr} }
+\end{figure}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=8.5cm]{figures/mos_ssim}
+  \caption{MOS on x-axis and SSIM on y-axis\label{fig:ssim} }
+\end{figure}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=8.5cm]{figures/mos_ess}
+  \caption{MOS on x-axis and ESS on y-axis\label{fig:ess} }
+\end{figure}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=8.5cm]{figures/mos_lss}
+  \caption{MOS on x-axis and LSS on y-axis\label{fig:lss} }
+\end{figure}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=8.5cm]{figures/mos_npcr}
+  \caption{MOS on x-axis and NCPR on y-axis\label{fig:npcr} }
+\end{figure}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=8.5cm]{figures/mos_uaci}
+  \caption{MOS on x-axis and UACI on y-axis\label{fig:uaci} }
+\end{figure}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=8.5cm]{figures/mos_entropy}
+  \caption{MOS on x-axis and entropy on y-axis\label{fig:entropy} }
+\end{figure}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=8.5cm]{figures/mos_corr_horiz}
+  \caption{MOS on x-axis and horizontal correlation on y-axis\label{fig:correlation} }
+\end{figure}
 \section{REFERENCES}
 \label{sec:ref}
 
