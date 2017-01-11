@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.10.10)  10 JAN 2017 16:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.10.10)  11 JAN 2017 13:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -131,38 +131,82 @@ LaTeX Info: Redefining \addtolength on input line 81.
 Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 )
 \pb@xlen=\skip49
-) (./icip.aux)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2016/02/20 v1.1-142 Sub-captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2016/02/21 v3.3-144 Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2016/02/04 v1.7-139 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 67.
+\captionmargin=\dimen116
+\captionmargin@=\dimen117
+\captionwidth=\dimen118
+\caption@tempdima=\dimen119
+\caption@indent=\dimen120
+\caption@parindent=\dimen121
+\caption@hangindent=\dimen122
+Package caption Info: Unknown document class (or package),
+(caption)             standard defaults will be used.
+)
+
+Package caption Warning: Unsupported document class (or package) detected,
+(caption)                usage of the caption package is not recommended.
+See the caption package documentation for explanation.
+
+Package caption Info: \@makecaption = \long macro:#1#2-> \vskip 10pt \setbox \@
+tempboxa \hbox {#1. #2} \ifdim \wd \@tempboxa >\hsize #1. #2\par \else \hbox to
+\hsize {\hfil \box \@tempboxa \hfil } \fi .
+\c@ContinuedFloat=\count103
+)
+\c@subfigure=\count104
+\c@subtable=\count105
+) (./icip.aux
+
+LaTeX Warning: Label `fig:sub1' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:sub1' multiply defined.
+
+
+LaTeX Warning: Label `fig:sub2' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:sub2' multiply defined.
+
+)
 \openout1 = `icip.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 42.
-LaTeX Font Info:    ... okay on input line 42.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 42.
-LaTeX Font Info:    ... okay on input line 42.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 42.
-LaTeX Font Info:    ... okay on input line 42.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 42.
-LaTeX Font Info:    ... okay on input line 42.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 42.
-LaTeX Font Info:    ... okay on input line 42.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 42.
-LaTeX Font Info:    ... okay on input line 42.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 42.
-
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 43.
+LaTeX Font Info:    ... okay on input line 43.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 43.
+LaTeX Font Info:    ... okay on input line 43.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 43.
+LaTeX Font Info:    ... okay on input line 43.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 43.
+LaTeX Font Info:    ... okay on input line 43.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 43.
+LaTeX Font Info:    ... okay on input line 43.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 43.
+LaTeX Font Info:    ... okay on input line 43.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 43.
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count103
-\scratchdimen=\dimen116
+\scratchcounter=\count106
+\scratchdimen=\dimen123
 \scratchbox=\box28
-\nofMPsegments=\count104
-\nofMParguments=\count105
+\nofMPsegments=\count107
+\nofMParguments=\count108
 \everyMPshowfont=\toks20
-\MPscratchCnt=\count106
-\MPscratchDim=\dimen117
-\MPnumerator=\count107
-\makeMPintoPDFobject=\count108
+\MPscratchCnt=\count109
+\MPscratchDim=\dimen124
+\MPnumerator=\count110
+\makeMPintoPDFobject=\count111
 \everyMPtoPDFconversion=\toks21
 ) (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
@@ -212,100 +256,138 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 45.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 46.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 47.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 48.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 57.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 58.
 
 
-LaTeX Warning: Citation `metrics_deficits' on page 1 undefined on input line 67
+LaTeX Warning: Citation `metrics_deficits' on page 1 undefined on input line 68
 .
 
 
-LaTeX Warning: Citation `metrics_deficits' on page 1 undefined on input line 69
+LaTeX Warning: Citation `metrics_deficits' on page 1 undefined on input line 70
 .
 
 
-LaTeX Warning: Citation `ssim' on page 1 undefined on input line 73.
+LaTeX Warning: Citation `ssim' on page 1 undefined on input line 74.
 
 
-LaTeX Warning: Citation `ess_lss' on page 1 undefined on input line 75.
+LaTeX Warning: Citation `ess_lss' on page 1 undefined on input line 76.
 
 
-LaTeX Warning: Citation `ess_lss' on page 1 undefined on input line 77.
+LaTeX Warning: Citation `ess_lss' on page 1 undefined on input line 78.
 
 
-LaTeX Warning: Citation `npcr_uaci' on page 1 undefined on input line 79.
+LaTeX Warning: Citation `npcr_uaci' on page 1 undefined on input line 80.
 
 
-LaTeX Warning: Citation `npcr_uaci' on page 1 undefined on input line 81.
-
-
-LaTeX Warning: Citation `bsds500' on page 1 undefined on input line 91.
-
-
-LaTeX Warning: Reference `ann:distortions' on page 1 undefined on input line 93
-.
+LaTeX Warning: Citation `npcr_uaci' on page 1 undefined on input line 82.
 
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 97--103
+<figures/140055.jpg, id=13, 482.80376pt x 322.20375pt>
+File: figures/140055.jpg Graphic file (type jpg)
+
+<use figures/140055.jpg>
+Package pdftex.def Info: figures/140055.jpg used on input line 97.
+(pdftex.def)             Requested size: 110.11148pt x 73.48091pt.
+
+<figures/ac_shuffle_xor_chrominance_luminance_76_140055.jpg, id=14, 482.80376pt
+ x 322.20375pt>
+File: figures/ac_shuffle_xor_chrominance_luminance_76_140055.jpg Graphic file (
+type jpg)
+
+<use figures/ac_shuffle_xor_chrominance_luminance_76_140055.jpg>
+Package pdftex.def Info: figures/ac_shuffle_xor_chrominance_luminance_76_140055
+.jpg used on input line 103.
+(pdftex.def)             Requested size: 110.11148pt x 73.48091pt.
+
+<figures/dc_xor_chrominance_luminance_76_140055.jpg, id=15, 482.80376pt x 322.2
+0375pt>
+File: figures/dc_xor_chrominance_luminance_76_140055.jpg Graphic file (type jpg
+)
+ <use figures/dc_xor_chrominance_luminance_76_140055.jpg>
+Package pdftex.def Info: figures/dc_xor_chrominance_luminance_76_140055.jpg use
+d on input line 109.
+(pdftex.def)             Requested size: 110.11148pt x 73.48091pt.
+
+<figures/ac_dc_shuffle_xor_chrominance_luminance_76_140055.jpg, id=16, 482.8037
+6pt x 322.20375pt>
+File: figures/ac_dc_shuffle_xor_chrominance_luminance_76_140055.jpg Graphic fil
+e (type jpg)
+
+<use figures/ac_dc_shuffle_xor_chrominance_luminance_76_140055.jpg>
+Package pdftex.def Info: figures/ac_dc_shuffle_xor_chrominance_luminance_76_140
+055.jpg used on input line 115.
+(pdftex.def)             Requested size: 110.11148pt x 73.48091pt.
+
+
+LaTeX Warning: Citation `bsds500' on page 2 undefined on input line 124.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 130--136
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 97--103
+Underfull \hbox (badness 10000) in paragraph at lines 130--136
 
  []
 
-
-LaTeX Warning: Reference `ann:distortions' on page 2 undefined on input line 10
-7.
-
-<figures/mos.png, id=13, 578.16pt x 433.62pt>
+<figures/mos.png, id=17, 578.16pt x 433.62pt>
 File: figures/mos.png Graphic file (type png)
  <use figures/mos.png>
-Package pdftex.def Info: figures/mos.png used on input line 111.
+Package pdftex.def Info: figures/mos.png used on input line 144.
 (pdftex.def)             Requested size: 241.84842pt x 181.38472pt.
 
-<figures/mos_psnr.png, id=15, 578.16pt x 433.62pt>
+<figures/mos_psnr.png, id=19, 578.16pt x 433.62pt>
 File: figures/mos_psnr.png Graphic file (type png)
  <use figures/mos_psnr.png>
-Package pdftex.def Info: figures/mos_psnr.png used on input line 120.
+Package pdftex.def Info: figures/mos_psnr.png used on input line 153.
 (pdftex.def)             Requested size: 241.84842pt x 181.38472pt.
 
-<figures/mos_ssim.png, id=16, 578.16pt x 433.62pt>
+<figures/mos_ssim.png, id=20, 578.16pt x 433.62pt>
 File: figures/mos_ssim.png Graphic file (type png)
  <use figures/mos_ssim.png>
-Package pdftex.def Info: figures/mos_ssim.png used on input line 127.
+Package pdftex.def Info: figures/mos_ssim.png used on input line 160.
 (pdftex.def)             Requested size: 241.84842pt x 181.38472pt.
 
-<figures/ssim_detail_11.png, id=17, 578.16pt x 433.62pt>
+[2 <./figures/140055.jpg> <./figures/ac_shuffle_xor_chrominance_luminance_76_14
+0055.jpg> <./figures/dc_xor_chrominance_luminance_76_140055.jpg> <./figures/ac_
+dc_shuffle_xor_chrominance_luminance_76_140055.jpg> <./figures/mos.png>]
+<figures/ssim_detail_11.png, id=25, 578.16pt x 433.62pt>
 File: figures/ssim_detail_11.png Graphic file (type png)
 
 <use figures/ssim_detail_11.png>
-Package pdftex.def Info: figures/ssim_detail_11.png used on input line 166.
+Package pdftex.def Info: figures/ssim_detail_11.png used on input line 199.
 (pdftex.def)             Requested size: 241.84842pt x 181.38472pt.
- (./icip.bbl) [2 <./figures/mos.png> <./figures/mos_psnr.png>] [3 <./figures/mo
-s_ssim.png> <./figures/ssim_detail_11.png>]
-(./icip.aux)
+ [3 <./figures/mos_psnr.png> <./figures/mos_ssim.png> <./figures/ssim_detail_11
+.png>] (./icip.bbl) [4
+
+] (./icip.aux)
 
 LaTeX Warning: There were undefined references.
 
+
+LaTeX Warning: There were multiply-defined labels.
+
  ) 
 Here is how much of TeX's memory you used:
- 2359 strings out of 493029
- 31543 string characters out of 6136233
- 133146 words of memory out of 5000000
- 5852 multiletter control sequences out of 15000+600000
+ 3503 strings out of 493029
+ 52724 string characters out of 6136233
+ 149240 words of memory out of 5000000
+ 6982 multiletter control sequences out of 15000+600000
  20508 words of font info for 44 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 37i,9n,25p,809b,249s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,9n,40p,917b,460s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/
@@ -314,10 +396,10 @@ ype1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/u
 rw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8
 a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/sha
 re/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on icip.pdf (3 pages, 187565 bytes).
+Output written on icip.pdf (4 pages, 618575 bytes).
 PDF statistics:
- 56 PDF objects out of 1000 (max. 8388607)
- 34 compressed objects within 1 object stream
+ 63 PDF objects out of 1000 (max. 8388607)
+ 36 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 21 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 41 words of extra memory for PDF output out of 10000 (max. 10000000)
 

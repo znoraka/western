@@ -5,6 +5,7 @@
 \documentclass{article}
 \usepackage{spconf,amsmath,graphicx}
 \usepackage{pbox}
+\usepackage{subcaption}
 
 % Example definitions.
 % --------------------
@@ -68,29 +69,61 @@ According to \cite{metrics_deficits}, there is not yet a security metric that co
 
 We give a quick overview of a few selected metrics. For a more in-depth review, we refer the reader to \cite{metrics_deficits}.
 
-\textbf{PSNR :} Even though it is known that the PSNR is not well correlated with human judgment, it is still widely used due to its speed and ease of use. The range is [0, $+\infty$], where two identical images would have a PSNR of $+\infty$.
+\textbf{PSNR :} Even though it is known that the PSNR is not well correlated with human judgment, it is still widely used due to its speed and ease of use. The range is [0; $+\infty$], where two identical images would have a PSNR of $+\infty$.
 
 \textbf{SSIM :} \cite{ssim}(Structural Similarity Index Measure). A luminance score, au contrast score and a structure score are combined to obtain the actual SSIM score. It has a range of [0;1] where identical images have a score of 1.
 
 \textbf{ESS :} \cite{ess_lss}(Edge Similarity Score). It uses non overlapping 8x8 block directions to compare images. With the range [0;1], a higher score reflects a less distorted image.
 
-\textbf{LSS :} \cite{ess_lss}(Luminance Similarity Score). It uses non overlapping 8x8 block average luminance to compare images. With the range [-8.5, 1] for default parameters of $\alpha=0.1$ and $\beta=3$, a higher score reflects a less distorted image.
+\textbf{LSS :} \cite{ess_lss}(Luminance Similarity Score). It uses non overlapping 8x8 block average luminance to compare images. With the range [-8.5; 1] for default parameters of $\alpha=0.1$ and $\beta=3$, a higher score reflects a less distorted image.
 
-\textbf{NPCR :} \cite{npcr_uaci}It is the number of pixel changes between images. Its range is [0,100], where a fully encrypted image has a NPCR close to 100, where almost all the pixels changed.
+\textbf{NPCR :} \cite{npcr_uaci}It is the number of pixel changes between images. Its range is [0;100], where a fully encrypted image has a NPCR close to 100, where almost all the pixels changed.
 
-\textbf{UACI :} \cite{npcr_uaci}It is the unified averaged changed intensity. It is the average intensity difference between two images. Its range is [0,100], where a fully encrypted image has a value close to 33.
+\textbf{UACI :} \cite{npcr_uaci}It is the unified averaged changed intensity. It is the average intensity difference between two images. Its range is [0;100], where a fully encrypted image has a value close to 33.
 
 \textbf{Entropy :} It is the amount of information in an image, for an 8-bit image, so an entropy of 8 would be the target for a full encryption method. It ranges from 0 to 8 in this case.
 
 \textbf{Correlation :} The correlation coefficient ranges from 0 to 1, it is the average correlation of adjacent pixels in an image, where a natural image would be highly correlated and a fully encrypted image would have low correlation.
 
+\newpage
 \section{Creating the dataset}
 \label{sec:dataset}
-The cryptocompression method we use is targeted towards JPEG images. We have six parameters that we can enable or not to generate a cryptocompressed image. \textit{Shuffle} and \textit{xor} are the parameters that decide de actual encryption method. \textit{AC} and \textit{DC} control which part of the DCT will be encrypted and two additionnal parameters, \textit{chrominance} and \textit{luminance} decide which of the luminance, chrominance (or both) DCT coefficients will be encrypted. As there must be at least one encryption method, at least one type of coefficient, and chrominance or luminance selected, we have a total of 27 different distortions.
+The cryptocompression method we use is targeted towards JPEG images. We have six parameters that we can enable or not to generate a cryptocompressed image. \textit{Shuffle} and \textit{xor} are the parameters that decide de actual encryption method. \textit{AC} and \textit{DC} control which part of the DCT will be encrypted and two additionnal parameters, \textit{chrominance} and \textit{luminance} decide which of the luminance, chrominance (or both) DCT coefficients will be encrypted. As there must be at least one encryption method, at least one type of coefficient, and chrominance or luminance selected, we have a total of 27 distortions with their different parameters. The distortions range from completely indecipherable images to almost invisible perturbations, as shown in Fig. \ref{fig:images}. This way, we hope to have appropriate distortions for different use cases
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{4.3cm}
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/140055}
+  \caption{Original image}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{4.3cm}
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/ac_shuffle_xor_chrominance_luminance_76_140055}
+  \caption{ac shuffle xor chroma luma}
+  \label{fig:sub2}
+\end{subfigure}
+\begin{subfigure}{4.3cm}
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/dc_xor_chrominance_luminance_76_140055}
+  \caption{dc xor chroma luma}
+  \label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{4.3cm}
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/ac_dc_shuffle_xor_chrominance_luminance_76_140055}
+  \caption{All six parameters}
+  \label{fig:sub2}
+\end{subfigure}
+
+\caption{Example of different distortions}
+\label{fig:images}
+\end{figure}
 
 \textit{Explain shuffle and xor and maybe link Vincent's paper}. We use the training images from the BSDS500 \cite{bsds500} dataset as our input images for a total of $27 * 200 = 5400$ cryptocompressed images.
 
-The 27 distortions are given in Annex \ref{ann:distortions}, they are named according to the parameters enabled and are sorted by MOS, as explained in Section \ref{sec:evaluation}, they are later designated by their number for ease of use.
+The 27 distortions are given in Appendix \ref{ann:distortions}, they are named according to the parameters enabled and are sorted by MOS, as explained in Section \ref{sec:evaluation}, they are later designated by their number for ease of use.
 
 \section{Image evaluation}
 \label{sec:evaluation}
@@ -104,7 +137,7 @@ We had a total of \textit{N} different person do the evaluation. They had to giv
 They had to rate 81 images, three for every distortion, the sessions were 10 to 15 minutes long, depending on the person. Each image was seen at most once by the user, to prevent them from recognising it and give it a higher score. The distortions order was shuffled differently for every evaluation and repeated three times in the same order. We chose to have every distortion rated three times because during our preliminary tests, we saw that for the first few images, the user was not confident on the score to give to an image, confidence that improved as they saw more images and distortion. It allowed us to filter the outliers caused by the learning curve while still having a good amount of rating.
 
 The images were evaluated in a dim room, on a \textit{details of the screen} screen, about $n$ meters away and around eyes level. The user could only see one image at a time, a new image shown once the previous had been rated.
-The MOS obtained during the evaluation are given Fig. \ref{fig:mos}. The name of the distortions are given in Annex \ref{ann:distortions}. We can see that after distortions $17$, the MOS get marginally better, this is due to the absence of the parameter $luminance$, the $shuffle$ and $xor$ are only performed on the chrominance, hence the better ratings.
+The MOS obtained during the evaluation are given Fig. \ref{fig:mos}. The name of the distortions are given in Appendix \ref{ann:distortions}. We can see that after distortions $17$, the MOS get marginally better, this is due to the absence of the parameter $luminance$, the $shuffle$ and $xor$ are only performed on the chrominance, hence the better ratings.
 
 \begin{figure}[ht]
   \centering
@@ -204,8 +237,43 @@ As we can se from these figures, most metrics actually follow a rough line, but 
     }
         \caption{Results for the 27 distortions \label{fig:table}}
     \end{table*}
-\section{REFERENCES}
-\label{sec:ref}
+% \section{REFERENCES}
+% \label{sec:ref}
+
+\appendix
+\section{Distortions}
+\label{ann:distortions}
+\begin{enumerate}
+  \itemsep-0.5em 
+  \setcounter{enumi}{-1}
+\item ac\_dc\_shuffle\_chrominance\_luminance
+\item ac\_dc\_shuffle\_xor\_chrominance\_luminance
+\item ac\_dc\_shuffle\_luminance
+\item ac\_dc\_shuffle\_xor\_luminance
+\item ac\_dc\_xor\_chrominance\_luminance
+\item ac\_dc\_xor\_luminance
+\item ac\_shuffle\_xor\_chrominance\_luminance
+\item dc\_shuffle\_xor\_chrominance\_luminance
+\item ac\_shuffle\_chrominance\_luminance
+\item dc\_shuffle\_chrominance\_luminance
+\item ac\_shuffle\_xor\_luminance
+\item ac\_xor\_chrominance\_luminance
+\item dc\_xor\_chrominance\_luminance
+\item dc\_shuffle\_xor\_luminance
+\item ac\_shuffle\_luminance
+\item ac\_xor\_luminance
+\item dc\_shuffle\_luminance
+\item dc\_xor\_luminance
+\item ac\_dc\_xor\_chrominance
+\item dc\_shuffle\_xor\_chrominance
+\item ac\_dc\_shuffle\_xor\_chrominance
+\item dc\_xor\_chrominance
+\item ac\_dc\_shuffle\_chrominance
+\item dc\_shuffle\_chrominance
+\item ac\_xor\_chrominance
+\item ac\_shuffle\_xor\_chrominance
+\item ac\_shuffle\_chrominance
+\end{enumerate}
 
 % List and number all bibliographical references at the end of the
 % paper. The references can be numbered in alphabetic order or in
@@ -220,6 +288,7 @@ As we can se from these figures, most metrics actually follow a rough line, but 
 % BiBTeX files (here: strings, refs, manuals). The IEEEbib.bst bibliography
 % style file from IEEE produces unsorted bibliography list.
 % -------------------------------------------------------------------------
+\newpage
 \bibliographystyle{IEEEbib}
 \bibliography{strings,refs}
 
