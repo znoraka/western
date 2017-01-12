@@ -1,13 +1,102 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
-\bibitem{Lamp86}
-A.B. Smith, C.D. Jones, and E.F. Roberts,
-\newblock ``Article title,''
-\newblock {\em Journal}, vol. 62, pp. 291--294, January 1920.
+\bibitem{hofbauer2016identifying}
+Heinz Hofbauer and Andreas Uhl,
+\newblock ``Identifying deficits of visual security metrics for images,''
+\newblock {\em Signal Processing: Image Communication}, vol. 46, pp. 60--75,
+  2016.
 
-\bibitem{C2}
-C.D. Jones, A.B. Smith, and E.F. Roberts,
-\newblock ``Article title,''
-\newblock in {\em Proceedings Title}. IEEE, 2003, vol.~II, pp. 803--806.
+\bibitem{wallace1992jpeg}
+Gregory~K Wallace,
+\newblock ``The jpeg still picture compression standard,''
+\newblock {\em IEEE transactions on consumer electronics}, vol. 38, no. 1, pp.
+  xviii--xxxiv, 1992.
+
+\bibitem{said2005measuring}
+Amir Said,
+\newblock ``Measuring the strength of partial encryption schemes,''
+\newblock in {\em IEEE International Conference on Image Processing 2005}.
+  IEEE, 2005, vol.~2, pp. II--1126.
+
+\bibitem{pinto2013protection}
+Michael Pinto, William Puech, and G{\'e}rard Subsol,
+\newblock ``Protection of jpeg compressed e-comics by selective encryption,''
+\newblock in {\em 2013 IEEE International Conference on Image Processing}.
+  IEEE, 2013, pp. 4588--4592.
+
+\bibitem{qian2014reversible}
+Zhenxing Qian, Xinpeng Zhang, and Shuozhong Wang,
+\newblock ``Reversible data hiding in encrypted jpeg bitstream,''
+\newblock {\em IEEE Transactions on Multimedia}, vol. 16, no. 5, pp.
+  1486--1491, 2014.
+
+\bibitem{niu2008jpeg}
+Xiam Niu, Chongqing Zhou, Jianghua Ding, and Bian Yang,
+\newblock ``Jpeg encryption with file size preservation,''
+\newblock in {\em Intelligent Information Hiding and Multimedia Signal
+  Processing, 2008. IIHMSP'08 International Conference on}. IEEE, 2008, pp.
+  308--311.
+
+\bibitem{unterweger2012length}
+Andreas Unterweger and Andreas Uhl,
+\newblock ``Length-preserving bit-stream-based jpeg encryption,''
+\newblock in {\em Proceedings of the on Multimedia and security}. ACM, 2012,
+  pp. 85--90.
+
+\bibitem{minemura2012jpeg}
+Kazuki Minemura, Zahra Moayed, KokSheik Wong, Xiaojun Qi, and Kiyoshi Tanaka,
+\newblock ``Jpeg image scrambling without expansion in bitstream size,''
+\newblock in {\em 2012 19th IEEE International Conference on Image Processing}.
+  IEEE, 2012, pp. 261--264.
+
+\bibitem{ong2015beyond}
+SimYing Ong, KokSheik Wong, Xiaojun Qi, and Kiyoshi Tanaka,
+\newblock ``Beyond format-compliant encryption for jpeg image,''
+\newblock {\em Signal Processing: Image Communication}, vol. 31, pp. 47--60,
+  2015.
+
+\bibitem{li2007leak}
+Weihai Li and Yuan Yuan,
+\newblock ``A leak and its remedy in jpeg image encryption,''
+\newblock {\em International Journal of Computer Mathematics}, vol. 84, no. 9,
+  pp. 1367--1378, 2007.
+
+\bibitem{fernandez2012advanced}
+Adrian G.~Bors William~Puech and Jos\'{e}~Marconi Rodrigues,
+\newblock {\em Advanced Color Image Processing and Analysis},
+\newblock Springer Science \& Business Media, 2013.
+
+\bibitem{amfm_pami2011}
+Pablo Arbelaez, Michael Maire, Charless Fowlkes, and Jitendra Malik,
+\newblock ``Contour detection and hierarchical image segmentation,''
+\newblock {\em IEEE Trans. Pattern Anal. Mach. Intell.}, vol. 33, no. 5, pp.
+  898--916, May 2011.
+
+\bibitem{wang2004image}
+Zhou Wang, Alan~C Bovik, Hamid~R Sheikh, and Eero~P Simoncelli,
+\newblock ``Image quality assessment: from error visibility to structural
+  similarity,''
+\newblock {\em IEEE transactions on image processing}, vol. 13, no. 4, pp.
+  600--612, 2004.
+
+\bibitem{mao2004security}
+Yinian Mao and Min Wu,
+\newblock ``Security evaluation for communication-friendly encryption of
+  multimedia,''
+\newblock in {\em Image Processing, 2004. ICIP'04. 2004 International
+  Conference on}. IEEE, 2004, vol.~1, pp. 569--572.
+
+\bibitem{chen2004symmetric}
+Guanrong Chen, Yaobin Mao, and Charles~K Chui,
+\newblock ``A symmetric image encryption scheme based on 3d chaotic cat maps,''
+\newblock {\em Chaos, Solitons \& Fractals}, vol. 21, no. 3, pp. 749--761,
+  2004.
+
+\bibitem{mao2004novel}
+Yaobin Mao, Guanrong Chen, and Shiguo Lian,
+\newblock ``A novel fast image encryption scheme based on 3d chaotic baker
+  maps,''
+\newblock {\em International Journal of Bifurcation and Chaos}, vol. 14, no.
+  10, pp. 3613--3624, 2004.
 
 \end{thebibliography}

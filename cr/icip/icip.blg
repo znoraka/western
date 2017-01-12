@@ -4,44 +4,44 @@ The top-level auxiliary file: icip.aux
 The style file: IEEEbib.bst
 Database file #1: strings.bib
 Database file #2: refs.bib
-You've used 2 entries,
+You've used 16 entries,
             1838 wiz_defined-function locations,
-            472 strings with 3684 characters,
-and the built_in function-call counts, 647 in all, are:
-= -- 60
-> -- 22
-< -- 2
-+ -- 8
-- -- 6
-* -- 52
-:= -- 97
-add.period$ -- 3
-call.type$ -- 2
-change.case$ -- 2
+            566 strings with 6480 characters,
+and the built_in function-call counts, 4763 in all, are:
+= -- 478
+> -- 165
+< -- 8
++ -- 61
+- -- 45
+* -- 378
+:= -- 692
+add.period$ -- 22
+call.type$ -- 16
+change.case$ -- 15
 chr.to.int$ -- 0
-cite$ -- 2
-duplicate$ -- 29
-empty$ -- 62
-format.name$ -- 6
-if$ -- 153
+cite$ -- 16
+duplicate$ -- 206
+empty$ -- 460
+format.name$ -- 45
+if$ -- 1101
 int.to.chr$ -- 0
-int.to.str$ -- 2
-missing$ -- 2
-newline$ -- 13
-num.names$ -- 2
-pop$ -- 6
+int.to.str$ -- 16
+missing$ -- 17
+newline$ -- 83
+num.names$ -- 16
+pop$ -- 50
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 17
+skip$ -- 100
 stack$ -- 0
-substring$ -- 49
-swap$ -- 13
-text.length$ -- 2
+substring$ -- 433
+swap$ -- 76
+text.length$ -- 8
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 5
-width$ -- 3
-write$ -- 26
+while$ -- 52
+width$ -- 18
+write$ -- 185
