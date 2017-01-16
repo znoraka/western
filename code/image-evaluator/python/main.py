@@ -49,12 +49,14 @@ def plot_mos(db, distortions, plot=True):
     if(plot):
         x = np.arange(len(l))
         y = map(float, l[:,0])
+        # y = np.arange(len(distortions))
         err = np.array(map(lambda x: [x * 0.5, x * 0.5], map(float, l[:,1])))
         err = np.array([err[:,0], err[:,1]])
-        plt.xticks(x, l[:,2], rotation=90)
+        # plt.xticks(x, l[:,2], rotation=90)
+        plt.xticks(x, np.arange(len(distortions)), rotation=90)
         plt.margins(0.1)
         plt.errorbar(x, y, yerr=err, linestyle='None', marker='.')
-        plt.subplots_adjust(left=0.06, bottom=0.29, right=0.95, top=0.95, wspace=0, hspace=0)
+        # plt.subplots_adjust(left=0.06, bottom=0.29, right=0.95, top=0.95, wspace=0, hspace=0)
         plt.savefig("images/" + "mos.png")
 
     return l[:,2]
@@ -83,24 +85,48 @@ def distance_to_line(m, c, stats, mos):
 
     return l
     
-def plot_mos_stat(db, distortions, stat):
-    plt.clf()
-    
+def plot_mos_stat(db, distortions, stat, twin=False):
     stats = get_stat(db, stat, distortions)
     mos = get_filtered_mos(db, distortions)
 
-    plt.plot(mos[:,0], stats[:,0])
-    for i in range(len(distortions)):
-        plt.annotate(i, xy=[mos[i][0], stats[i][0]], textcoords='data')
+    p = plt
+    c1 = 'b'
+    s = 'o'
+
+    if twin:
+        p = plt.twinx()
+        c1 = 'r'
+        s = '^'
+
+    p.plot(mos[:,0], stats[:,0], color=c1, marker=s, ls='--', linewidth=0.3)
 
     A = np.vstack([mos[:,0], np.ones(len(mos[:,0]))]).T
     m, c = np.linalg.lstsq(A, stats[:,0])[0]
     l = map(lambda x: m * x + c, range(1,6))
 
-    distance_to_line(m, c, stats, mos)
+    # distance_to_line(m, c, stats, mos)
+
+    plt.ylabel(stat, color=c1)
     
-    plt.plot(range(1,6), l, 'r', label='Fitted line')
+    p.plot(range(1,6), l, color=c1, label='Fitted line')
     plt.savefig("images/" + "mos_" + stat + ".png")
+
+    # stats = get_stat(db, stat, distortions)
+    # mos = get_filtered_mos(db, distortions)
+
+    # plt.plot(mos[:,0], stats[:,0])
+    # for i in range(len(distortions)):
+    #     plt.annotate(i, xy=[mos[i][0], stats[i][0]], textcoords='data')
+
+    # A = np.vstack([mos[:,0], np.ones(len(mos[:,0]))]).T
+    # m, c = np.linalg.lstsq(A, stats[:,0])[0]
+    # l = map(lambda x: m * x + c, range(1,6))
+
+    # distance_to_line(m, c, stats, mos)
+    
+    # plt.plot(range(1,6), l, 'r', label='Fitted line')
+    # plt.savefig("images/" + "mos_" + stat + ".png")
+
 
 def plot_distortion_mos(db, distortions):
    for d in distortions:
@@ -123,7 +149,7 @@ def plot_distortion_mos(db, distortions):
         plt.savefig("images/" + d + ".png")
 
 def stats_array(db, distortions):
-    stat_names = ["psnr", "entropy", "corr_horiz", "corr_vert", "uaci", "npcr", "ssim", "lss", "ess", "chisquare"]
+    stat_names = ["psnr", "entropy", "corr_horiz", "corr_vert", "uaci", "npcr", "ssim", "lss", "ess"]
     mos = get_filtered_mos(db, distortions)
     stats = []
 
@@ -146,9 +172,10 @@ def stats_array(db, distortions):
     print s
 
 
-def stat_cloud(db, distortions, stat):
+def stat_cloud(db, distortions, stat, stat_range=[0,1]):
     for i in range(len(distortions)):
         plt.clf()
+        plt.ylim(stat_range)
         d = distortions[i]
         l = {}
         res = np.sort(np.array(db.query("SELECT note, name FROM opinion WHERE name LIKE \"" + d + "_76%\"")), axis=0)
@@ -200,27 +227,41 @@ def main():
         "dc_xor_luminance"
     ]
 
-    d = plot_mos(db, distortions, False)
+    d = plot_mos(db, distortions)
 
     for a in zip(range(len(d)), d):
         print a
-    
+
+    plt.clf()
+    plot_mos_stat(db, d, "ss")
+        
+    plt.clf()
     plot_mos_stat(db, d, "psnr")
-    plot_mos_stat(db, d, "entropy")
+    plot_mos_stat(db, d, "ssim", True)
+
+    plt.clf()
     plot_mos_stat(db, d, "corr_horiz")
-    plot_mos_stat(db, d, "corr_vert")
+    plot_mos_stat(db, d, "corr_vert", True)
+
+    plt.clf()
     plot_mos_stat(db, d, "uaci")
-    plot_mos_stat(db, d, "npcr")
-    plot_mos_stat(db, d, "chisquare")
-    plot_mos_stat(db, d, "ssim")
+    plot_mos_stat(db, d, "npcr", True)
+    # # plot_mos_stat(db, d, "chisquare")
+
+    plt.clf()
     plot_mos_stat(db, d, "lss")
-    plot_mos_stat(db, d, "ess")
+    plot_mos_stat(db, d, "ess", True)
 
-    stats_array(db, d)
+    plt.clf()
+    plot_mos_stat(db, d, "entropy")
 
-    plot_distortion_mos(db, d)
+    # stats_array(db, d)
 
-    stat_cloud(db, d, "ssim")
+    # plot_distortion_mos(db, d)
+
+    stat_cloud(db, d, "ss")
+    # stat_cloud(db, d, "lss")
+    # stat_cloud(db, d, "ess")
     
 if __name__ == "__main__":
     main()
