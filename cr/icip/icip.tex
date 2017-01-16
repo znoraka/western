@@ -6,6 +6,7 @@
 \usepackage{spconf,amsmath,graphicx}
 \usepackage{pbox}
 \usepackage{subcaption}
+\usepackage{float}
 \usepackage{cite}
 
 % Example definitions.
@@ -19,8 +20,9 @@
 %
 % Single address.
 % ---------------
-\name{Author(s) Name(s)}
-\address{Author Affiliation(s)}
+% \name{No\'{e} Le Philippe, Vincent Itier, William Puech}
+% \address{Author Affiliation(s)}
+
 %
 % For example:
 % ------------
@@ -30,17 +32,19 @@
 %
 % Two addresses (uncomment and modify for two-address case).
 % ----------------------------------------------------------
-%\twoauthors
-%  {A. Author-one, B. Author-two\sthanks{Thanks to XYZ agency for funding.}}
-%	{School A-B\\
-%	Department A-B\\
-%	Address A-B}
-%  {C. Author-three, D. Author-four\sthanks{The fourth author performed the work
-%	while at ...}}
-%	{School C-D\\
-%	Department C-D\\
-%	Address C-D}
-%
+\twoauthors
+ {No\'{e} Le Philippe, William Puech}
+	{School A-B\\
+	Department A-B\\
+	Address A-B}
+ {Vincent Itier}
+	{School C-D\\
+	Department C-D\\
+	Address C-D}
+      %
+       % {LIRMM, UMR 5506 CNRS, University of Montpellier\\
+   % 860 rue de St Priest, Bat. 5, 34095 Montpellier, FRANCE}
+
 \begin{document}
 %\ninept
 %
@@ -64,12 +68,16 @@ One, two, three, four, five
 \label{sec:intro}
 More and more content is being shared everyday on the internet. Most of this content is trivial and does not need to be encrypted. Some of it however needs to be securely transfered, the problem of encryption arises. Full encryption with methods such as AES for exemple are often not needed in addition to not being possible due to computing power constraints. Instead, partial or selective encryption is used, where the goal is sufficient encryption. That is, the image is sufficently distorted and an attacker is not able to access the content. This distortion can be of varying magnitude, a strong distortion for exemple for DRM, or a lighter distortion, where the content is still recognizable to attract the viewers interest.
 
-  When an image is intented to be consumed by a human, the most accurate measure of its confidentiality is a Mean Opinion Score, where actual people rate the image. It is however not a realistic way to rate the distortion of an image as it is way to expensive and time consuming, security and quality metrics were introduced as a means to automate the process.
+When an image is intented to be consumed by a human, the most accurate measure of its confidentiality is a Mean Opinion Score, where actual people rate the image. It is however not a realistic way to rate the distortion of an image as it is way to expensive and time consuming, security and quality metrics were introduced as a means to automate the process.
 
-  According to \cite{hofbauer2016identifying}, there is not yet a security metric that consistently rates images across all the MOS spectrum. Most quality metrics fail to predict a MOS on low quality images, precisely where it would be most important to do so : decide whether an image is confidential.
+Image quality assessment is divided in two main fields, no reference image quality assessment (NR-IQA) and full reference image quality assessmetn (FR-IQA). NR-IQA refers to cases where only the processed image is available without extra information, such as the original image for example. We however focus our work on FR-IQA so we won't get into more details about  NR-IQA. We will not distinguish between security metrics and quality metrics, since in our case they will be used interchangeabley, as we will see in section~\ref{sec:dataset}, our images range from very low quality, or fully encrypted, to very high quality, almost no encryption. The PSNR is the most well know metric, but has been shown not to be well correlated with the human visual system (HVS), especially on low qulity images. The SSIM~\cite{wang2004image}, even if better correletated with the HVS, is not consistent across all image qualities. Similar metrics \cite{sheikh2006image, yao2009visual, tong2010visual, sun2011objective} exhibit the same deficiencies, either on low or high quality images, as shown by \cite{hofbauer2016identifying}, here is not yet a security metric that consistently rates images across all the MOS spectrum. Most quality metrics fail to predict a MOS on low quality images, precisely where it would be most important to do so : decide whether an image is confidential.
+
+  % According to \cite{hofbauer2016identifying}, there is not yet a security metric that consistently rates images across all the MOS spectrum. Most quality metrics fail to predict a MOS on low quality images, precisely where it would be most important to do so : decide whether an image is confidential.
 
   The most popular image compression standard is JPEG \cite{wallace1992jpeg}.  This method of lossy compression is popular both in normal use and in research. In order to exploit both efficient compression and encryption, format compliant methods are designed to produce content compatible with format specifications. There exist format compliant JPEG encryption methods which can be use in this context. Partial encryption methods using sign encryption have been shown unsecure by Said \cite{said2005measuring}. partial encryption is applied selectively on automaticaly detected faces. This method which relies on XOR operation with the AES algorithm, performs the compression and the encryption in the same process. Partial encryption is sufficient to keep hiding sensitive information, such as text \cite{pinto2013protection}. Moreover,it has the advantage to not change the size of the encrypted file. A reversible watermarking method in encrypted domain is proposed by Qian \textit{et al.} \cite{qian2014reversible}. This method relies on XOR operation but for more visual masking author encrypt also quantization table. Blocks and coefficients scrambling is used in \cite{niu2008jpeg, unterweger2012length, minemura2012jpeg, ong2015beyond}. Simple scrambling methods tend to increase the size if there is no verification of the run-length for example. Inter-block shuffle and non-zeros AC scrambles methods have been shown insecure to sketch attack by Li and Yan \cite{li2007leak}.
-  % Other authors propose a specific format for compression of encrypted images \cite{}, which are limited due to the removing of redundancy by the encryption. Moreover, encrypted images should be compatible with most viewers, social network, cloud storage i.e. format compliant. JPEG crypto-compressed images should be recompressible with the aim to be adapted to a reduced bandwidth or limited storage, for example. 
+
+  \paragraph*{}
+  Section~\ref{sec:dataset} presents the dataset we used and how it was created, then in section~\ref{sec:evaluation} we discuss the evaluation and rating of its images, by human as well as by security metrics, we introduce a new metric for images evaluation in section~\ref{sec:metric} and finally we conclude and open a few perspectives in section~\ref{sec:conclusion}.
 
 
 % \newpage
@@ -170,7 +178,7 @@ We had a total of \textit{N} different person do the evaluation. They had to giv
 
 They had to rate 81 images, three for every distortion, the sessions were 10 to 15 minutes long, depending on the person. Each image was seen at most once by the user, to prevent them from recognising it and give it a higher score. The distortions order was shuffled differently for every evaluation and repeated three times in the same order. We chose to have every distortion rated three times because during our preliminary tests, we saw that for the first few images, the user was not confident on the score to give to an image, confidence that improved as they saw more images and distortions. It allowed us to filter the outliers caused by the learning curve while still having a good amount of rating.
 
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \includegraphics[width=8.5cm]{figures/mos}
   \vspace{-5mm}
@@ -198,7 +206,7 @@ We give a quick overview of a few selected metrics we used for image analysis. F
 % \textbf{Correlation :} The correlation coefficient ranges from 0 to 1, it is the average correlation of adjacent pixels in an image, where a natural image would be highly correlated and a fully encrypted image would have low correlation.
 
 
-Our goal is to predict the rating a human would give to an image. In the best case scenario, a metric would be totally correlated with human rating and could be used to completely replace humans in image evaluation, this is however not the case, at least not for the metrics we selected, as shown in Fig. \ref{fig:images}.
+Our goal is to predict the rating a human would give to an image. In the best case scenario, a metric would be totally correlated with human rating and could be used to completely replace humans in image evaluation, this is however not the case, at least not for the metrics we selected, as shown in Fig.~\ref{fig:images}.
 
 \begin{figure}[ht]
 \centering
@@ -330,40 +338,40 @@ As we can se from these figures, most metrics actually follow a rough line, but 
 % \section{REFERENCES}
 % \label{sec:ref}
 
-\appendix
-\section{Distortions}
-\label{ann:distortions}
-\begin{enumerate}
-  \itemsep-0.5em 
-  \setcounter{enumi}{-1}
-\item ac\_dc\_shuffle\_chrominance\_luminance
-\item ac\_dc\_shuffle\_xor\_chrominance\_luminance
-\item ac\_dc\_shuffle\_luminance
-\item ac\_dc\_shuffle\_xor\_luminance
-\item ac\_dc\_xor\_chrominance\_luminance
-\item ac\_dc\_xor\_luminance
-\item ac\_shuffle\_xor\_chrominance\_luminance
-\item dc\_shuffle\_xor\_chrominance\_luminance
-\item ac\_shuffle\_chrominance\_luminance
-\item dc\_shuffle\_chrominance\_luminance
-\item ac\_shuffle\_xor\_luminance
-\item ac\_xor\_chrominance\_luminance
-\item dc\_xor\_chrominance\_luminance
-\item dc\_shuffle\_xor\_luminance
-\item ac\_shuffle\_luminance
-\item ac\_xor\_luminance
-\item dc\_shuffle\_luminance
-\item dc\_xor\_luminance
-\item ac\_dc\_xor\_chrominance
-\item dc\_shuffle\_xor\_chrominance
-\item ac\_dc\_shuffle\_xor\_chrominance
-\item dc\_xor\_chrominance
-\item ac\_dc\_shuffle\_chrominance
-\item dc\_shuffle\_chrominance
-\item ac\_xor\_chrominance
-\item ac\_shuffle\_xor\_chrominance
-\item ac\_shuffle\_chrominance
-\end{enumerate}
+% \appendix
+% \section{Distortions}
+% \label{ann:distortions}
+% \begin{enumerate}
+%   \itemsep-0.5em 
+%   \setcounter{enumi}{-1}
+% \item ac\_dc\_shuffle\_chrominance\_luminance
+% \item ac\_dc\_shuffle\_xor\_chrominance\_luminance
+% \item ac\_dc\_shuffle\_luminance
+% \item ac\_dc\_shuffle\_xor\_luminance
+% \item ac\_dc\_xor\_chrominance\_luminance
+% \item ac\_dc\_xor\_luminance
+% \item ac\_shuffle\_xor\_chrominance\_luminance
+% \item dc\_shuffle\_xor\_chrominance\_luminance
+% \item ac\_shuffle\_chrominance\_luminance
+% \item dc\_shuffle\_chrominance\_luminance
+% \item ac\_shuffle\_xor\_luminance
+% \item ac\_xor\_chrominance\_luminance
+% \item dc\_xor\_chrominance\_luminance
+% \item dc\_shuffle\_xor\_luminance
+% \item ac\_shuffle\_luminance
+% \item ac\_xor\_luminance
+% \item dc\_shuffle\_luminance
+% \item dc\_xor\_luminance
+% \item ac\_dc\_xor\_chrominance
+% \item dc\_shuffle\_xor\_chrominance
+% \item ac\_dc\_shuffle\_xor\_chrominance
+% \item dc\_xor\_chrominance
+% \item ac\_dc\_shuffle\_chrominance
+% \item dc\_shuffle\_chrominance
+% \item ac\_xor\_chrominance
+% \item ac\_shuffle\_xor\_chrominance
+% \item ac\_shuffle\_chrominance
+% \end{enumerate}
 
 % List and number all bibliographical references at the end of the
 % paper. The references can be numbered in alphabetic order or in

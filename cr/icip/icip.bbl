@@ -1,5 +1,37 @@
 \begin{thebibliography}{10}
 
+\bibitem{wang2004image}
+Zhou Wang, Alan~C Bovik, Hamid~R Sheikh, and Eero~P Simoncelli,
+\newblock ``Image quality assessment: from error visibility to structural
+  similarity,''
+\newblock {\em IEEE transactions on image processing}, vol. 13, no. 4, pp.
+  600--612, 2004.
+
+\bibitem{sheikh2006image}
+Hamid~R Sheikh and Alan~C Bovik,
+\newblock ``Image information and visual quality,''
+\newblock {\em IEEE Transactions on Image Processing}, vol. 15, no. 2, pp.
+  430--444, 2006.
+
+\bibitem{yao2009visual}
+Ye~Yao, Zhengquan Xu, and Jing Sun,
+\newblock ``Visual security assessment for cipher-images based on neighborhood
+  similarity,''
+\newblock {\em Informatica}, vol. 33, no. 1, 2009.
+
+\bibitem{tong2010visual}
+Lingling Tong, Feng Dai, Yongdong Zhang, and Jintao Li,
+\newblock ``Visual security evaluation for video encryption,''
+\newblock in {\em Proceedings of the 18th ACM international conference on
+  Multimedia}. ACM, 2010, pp. 835--838.
+
+\bibitem{sun2011objective}
+Jing Sun, Zhengquan Xu, Jin Liu, and Ye~Yao,
+\newblock ``An objective visual security assessment for cipher-images based on
+  local entropy,''
+\newblock {\em Multimedia Tools and Applications}, vol. 53, no. 1, pp. 75--95,
+  2011.
+
 \bibitem{hofbauer2016identifying}
 Heinz Hofbauer and Andreas Uhl,
 \newblock ``Identifying deficits of visual security metrics for images,''
@@ -71,13 +103,6 @@ Pablo Arbelaez, Michael Maire, Charless Fowlkes, and Jitendra Malik,
 \newblock ``Contour detection and hierarchical image segmentation,''
 \newblock {\em IEEE Trans. Pattern Anal. Mach. Intell.}, vol. 33, no. 5, pp.
   898--916, May 2011.
-
-\bibitem{wang2004image}
-Zhou Wang, Alan~C Bovik, Hamid~R Sheikh, and Eero~P Simoncelli,
-\newblock ``Image quality assessment: from error visibility to structural
-  similarity,''
-\newblock {\em IEEE transactions on image processing}, vol. 13, no. 4, pp.
-  600--612, 2004.
 
 \bibitem{mao2004security}
 Yinian Mao and Min Wu,
