@@ -7,6 +7,8 @@ import scipy
 from scipy import ndimage
 from scipy import signal
 import gauss
+import cv2
+from saliency import Saliency
 from os import walk
 
 def rgb2gray(rgb):
@@ -199,6 +201,37 @@ def mssim(cover, stego):
     return (np.prod(mcs[0:level-1]**weight[0:level-1])*
                 (mssim[level-1]**weight[level-1]))
 
+def saliency_map(img):
+        sal = Saliency(np.array(img), use_numpy_fft=False, gauss_kernel=(3, 3))
+        saliency = Image.fromarray(np.uint8(sal.get_saliency_map()*255))
+        return saliency
+
+def saliency_score(cover, stego):
+        # cover = cover.resize((100, int(100.0 * cover.size[1] / cover.size[0])), Image.ANTIALIAS)
+        # stego = stego.resize((100, int(100.0 * stego.size[1] / stego.size[0])), Image.ANTIALIAS)
+        
+        f = np.vectorize(lambda x, threshold: 0 if (x < threshold) else 1)
+        f1 = np.vectorize(lambda x, y: 1 if x == y and x == 1 else 0)
+        
+        s1 = Saliency(np.array(cover), use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
+        s2 = Saliency(np.array(stego), use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
+
+        w, h = s1.shape
+
+        s1 = s1.reshape(w*h)
+        s2 = s2.reshape(w*h)
+
+        l = np.sort(s1)
+        t = l[int(len(l) * 0.95)]
+        s1 = f(s1, t)
+
+        # l = np.sort(s2)
+        s2 = f(s2, t)
+
+        # return (float((s1 == s2).sum()) / float(w * h) + ess(cover, stego)) * 0.5
+        # return float((s1 == s2).sum()) / float(w * h)
+        return (float(f1(s1, s2).sum()) / float(s1.sum()) + ess(cover, stego)) * 0.5
+
 def create_queries(stego_path, cover_path):
     files = []
     for (dirpath, dirnames, filenames) in walk(stego_path):
@@ -211,14 +244,34 @@ def create_queries(stego_path, cover_path):
         l = [psnr(im1, im2), npcr(im1, im2), uaci(im1, im2), correlation(im1, im2)[1], correlation(im1, im2, False)[1], entropy(im1, im2)[1], chisquare(im1, im2)[1], ssim(im1, im2), lss(im1, im2), ess(im1, im2)]
         f = "'" + f + "',"
         print "INSERT INTO stats (image, psnr, npcr, uaci, corr_horiz, corr_vert, entropy, chisquare, ssim, lss, ess) VALUES (", f, ", ".join(map(lambda i: "'" + '%.5f'%i + "'", l)), ");"
+
+def update_db(stego_path, cover_path, stat, func):
+        files = []
+        for (dirpath, dirnames, filenames) in walk(stego_path):
+                files.extend(filenames)
+                break
+
+        for f in files:
+                im2 = Image.open(stego_path + f)
+                im1 = Image.open(cover_path + f.split("_")[-1])
+                res = func(im1, im2)
+                f = "'" + f + "'"
+                print "UPDATE stats SET " + stat + "='" + '%.5f'%res + "' WHERE image=" + f + ";"
         
 def main():
-    # im1 = Image.open("/home/noe/Documents/dev/cdd/dataset/train/118020.jpg")
-    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_dc_shuffle_chrominance_76_118020.jpg")
+    # im1 = Image.open("/home/noe/Documents/dev/cdd/dataset/train/2092.jpg")
+    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/dc_shuffle_xor_luminance_76_2092.jpg")
     # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_xor_chrominance_76_2092.jpg")
     # im1 = Image.open("/home/noe/Downloads/Noise.jpg")
     # im2 = Image.open("/home/noe/Downloads/Noise.jpg")
 
+    # im1.show()
+    # im2.show()
+    # saliency_map(im1).show("im1")
+    # saliency_map(im2).show("im2")
+    # 
+    # print "saliency score =", saliency_score(im1, im2)
+    
     # print "psnr :", psnr(im1, im2)
     # print "npcr :", npcr(im1, im2)
     # print "uaci :", uaci(im1, im2)
@@ -231,7 +284,8 @@ def main():
     # print "lss :", lss(im1, im2)
     # print "ess :", ess(im1, im2)
     
-    create_queries("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/")
+    # create_queries("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/")
+    update_db("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/", "ss", saliency_score)
 
 if __name__ == "__main__":
     main()
