@@ -1,4 +1,5 @@
 from PIL import Image
+from PIL import ImageFilter
 import numpy as np
 import random
 import math
@@ -201,67 +202,130 @@ def mssim(cover, stego):
     return (np.prod(mcs[0:level-1]**weight[0:level-1])*
                 (mssim[level-1]**weight[level-1]))
 
-def saliency_map(img):
-        sal = Saliency(np.array(img), use_numpy_fft=False, gauss_kernel=(3, 3))
-        saliency = Image.fromarray(np.uint8(sal.get_saliency_map()*255))
-        return saliency
-
-def saliency_score(cover, stego):
-        # cover = cover.resize((100, int(100.0 * cover.size[1] / cover.size[0])), Image.ANTIALIAS)
-        # stego = stego.resize((100, int(100.0 * stego.size[1] / stego.size[0])), Image.ANTIALIAS)
-        
-        f = np.vectorize(lambda x, threshold: 0 if (x < threshold) else 1)
+def saliency_score(cover, stego, ess_score = -1):
+        f = np.vectorize(lambda x, threshold: 0 if (x > threshold) else 1)
         f1 = np.vectorize(lambda x, y: 1 if x == y and x == 1 else 0)
+
+        def sobel(img):
+                img = img.astype('int32')
+                dx = ndimage.sobel(img, 0)
+                dy = ndimage.sobel(img, 1)
+                mag = np.hypot(dx, dy)  # magnitude
+                mag *= 255.0 / np.max(mag)
+                return mag
+                # return np.vectorize(f)(dx, dy)
+
+        def func(cover, stego, scale):
+                cover = cover.resize(((cover.size[0] / scale, cover.size[1] / scale)), Image.ANTIALIAS)
+                stego = stego.resize(((stego.size[0] / scale, stego.size[1] / scale)), Image.ANTIALIAS)
+                
+                cover = rgb2gray(np.array(cover))
+                stego = rgb2gray(np.array(stego))
+
+                sob1 = sobel(cover)
+                sob2 = sobel(stego)
+
+                t = np.percentile(sob1, 20)
+                sob1 = f(np.uint8(sob1), t)
+
+                t = np.percentile(sob2, 20)
+                sob2 = f(np.uint8(sob2), t)
+
+                cover = np.array(cover)
+                stego = np.array(stego)
         
-        s1 = Saliency(np.array(cover), use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
-        s2 = Saliency(np.array(stego), use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
+                s1 = Saliency(np.array(cover), use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
+                s2 = Saliency(np.array(stego), use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
 
-        w, h = s1.shape
+                # w, h = s1.shape
 
-        s1 = s1.reshape(w*h)
-        s2 = s2.reshape(w*h)
+                # # s1 = s1.reshape(w*h)
+                # # s2 = s2.reshape(w*h)
+                
+                # # l = np.sort(s1)
+                # # t = l[int(len(l) * 0.50)]
+                
+                t = np.percentile(s1, 10)
+                s1 = f(s1, t)
+                
+                # # l = np.sort(s2)
+                # # t = l[int(len(l) * 0.20)]
 
-        l = np.sort(s1)
-        t = l[int(len(l) * 0.95)]
-        s1 = f(s1, t)
+                # t = np.percentile(s2, 10)
+                s2 = f(s2, t)
+                
+                # Image.fromarray(np.uint8(s1 * 255)).show()
+                # Image.fromarray(cover).show()
+                # Image.fromarray(np.uint8(sob1 * 255)).show()
+                
+                # Image.fromarray(np.uint8(s2 * 255)).show()
+                # Image.fromarray(stego).show()
+                # Image.fromarray(np.uint8(sob2 * 255)).show()
 
-        # l = np.sort(s2)
-        s2 = f(s2, t)
+                # print s1.sum(), s2.sum(), float(s2.sum()) / float(s1.sum())
 
         # return (float((s1 == s2).sum()) / float(w * h) + ess(cover, stego)) * 0.5
         # return float((s1 == s2).sum()) / float(w * h)
-        return (float(f1(s1, s2).sum()) / float(s1.sum()) + ess(cover, stego)) * 0.5
+        # return (float(f1(s1, s2).sum()) / float(s1.sum()) + ess(cover, stego)) * 0.5
+                # print float(f1(s1, s2).sum()) / float(s1.sum()), float(f1(sob1, sob2).sum()) / float(sob1.sum()), (float(f1(sob1, sob2).sum()) / float(sob1.sum()) + float(f1(s1, s2).sum()) / float(s1.sum())) * 0.5
+                # return float(f1(sob1, sob2).sum()) / float(sob1.sum())
+                return (float(f1(sob1, sob2).sum()) / float(sob1.sum()) + float(f1(s1, s2).sum()) / float(s1.sum())) * 0.5
+                # return float(f1(s1, s2).sum()) / float(s1.sum())
+                # return float(f1(s1, s2).sum()) / float(s1.sum())
+                # return float((s1 == s2).sum()) / float(w * h)
+
+        if ess_score == -1:
+                ess_score = ess(cover, stego)
+        
+        # return (((func(cover, stego, 1) + func(cover, stego, 2) + func(cover, stego, 4) + func(cover, stego, 8)) * 0.25) + ess_score) * 0.5
+        # return (func(cover, stego, 1) + func(cover, stego, 2) + func(cover, stego, 4) + func(cover, stego, 8) + ess_score) * 0.2
+        # return (func(cover, stego, 1) + func(cover, stego, 2) + func(cover, stego, 4) + func(cover, stego, 8)) * 0.25
+        # return func(cover, stego, 1) * 0.25 + ess_score * 0.75
+        return func(cover, stego, 1)
 
 def create_queries(stego_path, cover_path):
     files = []
     for (dirpath, dirnames, filenames) in walk(stego_path):
         files.extend(filenames)
         break
-    
-    for f in files:
-        im2 = Image.open(stego_path + f)
-        im1 = Image.open(cover_path + f.split("_")[-1])
-        l = [psnr(im1, im2), npcr(im1, im2), uaci(im1, im2), correlation(im1, im2)[1], correlation(im1, im2, False)[1], entropy(im1, im2)[1], chisquare(im1, im2)[1], ssim(im1, im2), lss(im1, im2), ess(im1, im2)]
-        f = "'" + f + "',"
-        print "INSERT INTO stats (image, psnr, npcr, uaci, corr_horiz, corr_vert, entropy, chisquare, ssim, lss, ess) VALUES (", f, ", ".join(map(lambda i: "'" + '%.5f'%i + "'", l)), ");"
 
-def update_db(stego_path, cover_path, stat, func):
+    for f in files:
+            im2 = Image.open(stego_path + f)
+            im1 = Image.open(cover_path + f.split("_")[-1])
+            l = [psnr(im1, im2), npcr(im1, im2), uaci(im1, im2), correlation(im1, im2)[1], correlation(im1, im2, False)[1], entropy(im1, im2)[1], chisquare(im1, im2)[1], ssim(im1, im2), lss(im1, im2), ess(im1, im2)]
+            f = "'" + f + "',"
+            print "INSERT INTO stats (image, psnr, npcr, uaci, corr_horiz, corr_vert, entropy, chisquare, ssim, lss, ess) VALUES (", f, ", ".join(map(lambda i: "'" + '%.5f'%i + "'", l)), ");"
+
+def update_db(stego_path, cover_path, stat, func, score_path = None):
         files = []
         for (dirpath, dirnames, filenames) in walk(stego_path):
                 files.extend(filenames)
                 break
 
-        for f in files:
+        if score_path is not None:
+                with open(score_path) as f:
+                        content = f.readlines()
+                        content = [x.strip("'") for x in content]
+                        content = [x.strip("'\n") for x in content]
+                        
+        for i in range(len(files)):
+                f = files[i]
+                if score_path is not None:
+                        score = float(content[i])
+                else:
+                        score = -1
                 im2 = Image.open(stego_path + f)
                 im1 = Image.open(cover_path + f.split("_")[-1])
-                res = func(im1, im2)
+                res = func(im1, im2, score)
                 f = "'" + f + "'"
                 print "UPDATE stats SET " + stat + "='" + '%.5f'%res + "' WHERE image=" + f + ";"
         
 def main():
-    # im1 = Image.open("/home/noe/Documents/dev/cdd/dataset/train/2092.jpg")
-    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/dc_shuffle_xor_luminance_76_2092.jpg")
-    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_xor_chrominance_76_2092.jpg")
+    # im1 = Image.open("/home/noe/Documents/dev/cdd/dataset/train/100098.jpg")
+    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_xor_luminance_76_100098.jpg")
+    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_dc_xor_luminance_76_100098.jpg")
+    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_dc_xor_luminance_76_100098.jpg")
+    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/dc_xor_luminance_76_2092.jpg")
     # im1 = Image.open("/home/noe/Downloads/Noise.jpg")
     # im2 = Image.open("/home/noe/Downloads/Noise.jpg")
 
@@ -269,7 +333,7 @@ def main():
     # im2.show()
     # saliency_map(im1).show("im1")
     # saliency_map(im2).show("im2")
-    # 
+    
     # print "saliency score =", saliency_score(im1, im2)
     
     # print "psnr :", psnr(im1, im2)
@@ -285,7 +349,7 @@ def main():
     # print "ess :", ess(im1, im2)
     
     # create_queries("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/")
-    update_db("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/", "ss", saliency_score)
+    update_db("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/", "ss", saliency_score, "/home/noe/Documents/dev/cdd/code/image-evaluator/python/out")
 
 if __name__ == "__main__":
     main()
