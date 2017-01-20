@@ -50,6 +50,12 @@ Amir Said,
 \newblock in {\em IEEE International Conference on Image Processing 2005}.
   IEEE, 2005, vol.~2, pp. II--1126.
 
+\bibitem{rodrigues2006selective}
+Jos{\'e}~M Rodrigues, William Puech, and Adrian~G Bors,
+\newblock ``Selective encryption of human skin in jpeg images,''
+\newblock in {\em 2006 International Conference on Image Processing}. IEEE,
+  2006, pp. 1981--1984.
+
 \bibitem{pinto2013protection}
 Michael Pinto, William Puech, and G{\'e}rard Subsol,
 \newblock ``Protection of jpeg compressed e-comics by selective encryption,''
@@ -123,5 +129,12 @@ Yaobin Mao, Guanrong Chen, and Shiguo Lian,
   maps,''
 \newblock {\em International Journal of Bifurcation and Chaos}, vol. 14, no.
   10, pp. 3613--3624, 2004.
+
+\bibitem{itti1998model}
+Laurent Itti, Christof Koch, and Ernst Niebur,
+\newblock ``A model of saliency-based visual attention for rapid scene
+  analysis,''
+\newblock {\em IEEE Transactions on pattern analysis and machine intelligence},
+  vol. 20, no. 11, pp. 1254--1259, 1998.
 
 \end{thebibliography}

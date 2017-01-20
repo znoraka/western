@@ -5,45 +5,45 @@ The style file: IEEEbib.bst
 Database file #1: strings.bib
 Database file #2: refs.bib
 Warning--I didn't find a database entry for ""
-You've used 20 entries,
+You've used 22 entries,
             1838 wiz_defined-function locations,
-            591 strings with 7158 characters,
-and the built_in function-call counts, 5807 in all, are:
-= -- 578
-> -- 212
-< -- 9
-+ -- 78
-- -- 58
-* -- 466
-:= -- 853
-add.period$ -- 27
-call.type$ -- 20
-change.case$ -- 19
+            604 strings with 7557 characters,
+and the built_in function-call counts, 6498 in all, are:
+= -- 650
+> -- 234
+< -- 10
++ -- 86
+- -- 64
+* -- 519
+:= -- 947
+add.period$ -- 30
+call.type$ -- 22
+change.case$ -- 21
 chr.to.int$ -- 0
-cite$ -- 20
-duplicate$ -- 250
-empty$ -- 556
-format.name$ -- 58
-if$ -- 1337
+cite$ -- 22
+duplicate$ -- 281
+empty$ -- 622
+format.name$ -- 64
+if$ -- 1501
 int.to.chr$ -- 0
-int.to.str$ -- 20
-missing$ -- 21
-newline$ -- 103
-num.names$ -- 20
-pop$ -- 59
+int.to.str$ -- 22
+missing$ -- 23
+newline$ -- 113
+num.names$ -- 22
+pop$ -- 66
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 119
+skip$ -- 137
 stack$ -- 0
-substring$ -- 509
-swap$ -- 90
-text.length$ -- 9
+substring$ -- 580
+swap$ -- 104
+text.length$ -- 10
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 63
-width$ -- 22
-write$ -- 230
+while$ -- 70
+width$ -- 24
+write$ -- 253
 (There was 1 warning)
