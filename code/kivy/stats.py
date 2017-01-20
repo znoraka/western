@@ -215,10 +215,13 @@ def saliency_score(cover, stego, ess_score = -1):
                 return mag
                 # return np.vectorize(f)(dx, dy)
 
-        def func(cover, stego, scale):
-                cover = cover.resize(((cover.size[0] / scale, cover.size[1] / scale)), Image.ANTIALIAS)
-                stego = stego.resize(((stego.size[0] / scale, stego.size[1] / scale)), Image.ANTIALIAS)
+        def func(cover, stego, scale=1):
+                # cover = cover.resize(((cover.size[0] / scale, cover.size[1] / scale)), Image.ANTIALIAS)
+                # stego = stego.resize(((stego.size[0] / scale, stego.size[1] / scale)), Image.ANTIALIAS)
                 
+                s1 = Saliency(np.array(cover), use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
+                s2 = Saliency(np.array(stego), use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
+
                 cover = rgb2gray(np.array(cover))
                 stego = rgb2gray(np.array(stego))
 
@@ -234,9 +237,6 @@ def saliency_score(cover, stego, ess_score = -1):
                 cover = np.array(cover)
                 stego = np.array(stego)
         
-                s1 = Saliency(np.array(cover), use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
-                s2 = Saliency(np.array(stego), use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
-
                 # w, h = s1.shape
 
                 # # s1 = s1.reshape(w*h)
@@ -245,13 +245,13 @@ def saliency_score(cover, stego, ess_score = -1):
                 # # l = np.sort(s1)
                 # # t = l[int(len(l) * 0.50)]
                 
-                t = np.percentile(s1, 10)
+                t = np.percentile(s1, 5)
                 s1 = f(s1, t)
                 
                 # # l = np.sort(s2)
                 # # t = l[int(len(l) * 0.20)]
 
-                # t = np.percentile(s2, 10)
+                t = np.percentile(s2, 5)
                 s2 = f(s2, t)
                 
                 # Image.fromarray(np.uint8(s1 * 255)).show()
@@ -269,7 +269,12 @@ def saliency_score(cover, stego, ess_score = -1):
         # return (float(f1(s1, s2).sum()) / float(s1.sum()) + ess(cover, stego)) * 0.5
                 # print float(f1(s1, s2).sum()) / float(s1.sum()), float(f1(sob1, sob2).sum()) / float(sob1.sum()), (float(f1(sob1, sob2).sum()) / float(sob1.sum()) + float(f1(s1, s2).sum()) / float(s1.sum())) * 0.5
                 # return float(f1(sob1, sob2).sum()) / float(sob1.sum())
-                return (float(f1(sob1, sob2).sum()) / float(sob1.sum()) + float(f1(s1, s2).sum()) / float(s1.sum())) * 0.5
+                return (float(f1(sob1, sob2).sum()) / float(sob1.sum())) * 0.75 + (float(f1(s1, s2).sum()) / float(s1.sum())) * 0.25
+
+
+                # return (float(np.logical_and(sob1, sob2)) / float(sob1.sum())) * 0.75 + (float(np.logical_and(s1, s2)).sum() / float(s1.sum())) * 0.25
+
+                # return (float(f1(sob1, sob2).sum()) / float(sob1.sum()) + float(f1(s1, s2).sum()) / float(s1.sum())) * 0.5
                 # return float(f1(s1, s2).sum()) / float(s1.sum())
                 # return float(f1(s1, s2).sum()) / float(s1.sum())
                 # return float((s1 == s2).sum()) / float(w * h)
