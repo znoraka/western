@@ -107,6 +107,8 @@ def plot_mos_stat(db, distortions, stat, twin=False):
     # distance_to_line(m, c, stats, mos)
 
     plt.ylabel(stat, color=c1)
+    for i in range(len(distortions)):
+        plt.annotate(i, xy=[mos[i][0], stats[i][0]], textcoords='data')
     
     p.plot(range(1,6), l, color=c1, label='Fitted line')
     plt.savefig("images/" + "mos_" + stat + ".png")
@@ -149,7 +151,7 @@ def plot_distortion_mos(db, distortions):
         plt.savefig("images/" + d + ".png")
 
 def stats_array(db, distortions):
-    stat_names = ["psnr", "entropy", "corr_horiz", "corr_vert", "uaci", "npcr", "ssim", "lss", "ess"]
+    stat_names = ["psnr", "entropy", "corr_horiz", "corr_vert", "uaci", "npcr", "ssim", "lss", "ess", "ss"]
     mos = get_filtered_mos(db, distortions)
     stats = []
 
@@ -234,10 +236,17 @@ def main():
 
     plt.clf()
     plot_mos_stat(db, d, "ss")
-        
+
     plt.clf()
-    plot_mos_stat(db, d, "psnr")
+    plot_mos_stat(db, d, "ess") 
+
+    plt.clf()
+    plot_mos_stat(db, d, "ss")
     plot_mos_stat(db, d, "ssim", True)
+
+    # plt.clf()
+    # plot_mos_stat(db, d, "psnr")
+    # plot_mos_stat(db, d, "ssim", True)
 
     plt.clf()
     plot_mos_stat(db, d, "corr_horiz")
@@ -248,14 +257,14 @@ def main():
     plot_mos_stat(db, d, "npcr", True)
     # # plot_mos_stat(db, d, "chisquare")
 
-    plt.clf()
-    plot_mos_stat(db, d, "lss")
-    plot_mos_stat(db, d, "ess", True)
+    # plt.clf()
+    # plot_mos_stat(db, d, "lss")
+    # plot_mos_stat(db, d, "ess", True)
 
     plt.clf()
     plot_mos_stat(db, d, "entropy")
 
-    # stats_array(db, d)
+    stats_array(db, d)
 
     # plot_distortion_mos(db, d)
 
