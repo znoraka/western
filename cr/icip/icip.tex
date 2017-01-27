@@ -388,9 +388,9 @@ As we can se from these figures, most metrics actually follow a rough line, but 
 % BiBTeX files (here: strings, refs, manuals). The IEEEbib.bst bibliography
 % style file from IEEE produces unsorted bibliography list.
 % -------------------------------------------------------------------------
-\section{New metric}
+\section{Visual saliency as a means to evaluate image}
 \label{sec:metric}
-In this section, we present the new metric we designed, the results we obtained and their analysis. Our metric is based on the visual saliency in images, and more specifically, and saliency map, a grayscale image where less salient pixels are darker than more salient pixels in the original image. The visual saliency is interesting in our case for image quality assessment because we want to know whether the meaning of the content of an image is accessible. According to \cite{itti1998model}, important information is located in salient areas. Our idea is that if salient areas are consistent in the original image and in the processed image, the content is readily available.
+In this section, we present the new metric we designed, the results we obtained and their analysis. Our metric is based on the visual saliency in images, and more specifically, and saliency map, a grayscale image where less salient pixels are darker than more salient pixels in the original image. The visual saliency is interesting in our case for image quality assessment because we want to know whether the meaning of the content of an image is accessible. According to \cite{itti1998model}, important information is located in salient areas. Our reasoning is twofold: if salient areas are consistent in both the original and the processed image, the same amount of information is present in the images and the content is readily available, and if no salient areas can be found, as important information is located in salient areas, then the content is hidden. We try to compute to which extent the visual saliency of two images are similar to extract a score.
 
 \paragraph*{}
 Let $M_o$  be the saliency map of the original image and $M_p$ be the saliency map of the processed image. A threshold is applied to $M_o$ and $M_p$ to only keep the most salient areas of each image, the best threshold has been experimentally found (Fig~\ref{}) to be $5\%$ more salient areas. Two binary images are thus created, $B_o$ from $M_o$ and $B_p$ from $M_p$. A first value is computed as such:
@@ -403,15 +403,46 @@ where $f(.,.)$ is:
 $$
 f(x,y) = \begin{cases}
     1, & \textbf{if}\ x = 1\ \textbf{and}\ y = 1\\ 
-    0 & Otherwise
+    0 & Otherwise,
   \end{cases}
 $$
 
 and $sum(B_o)$ is actually the number of pixels of value 1.
 
 \paragraph*{}
+\begin{figure}[H]
+  \centering
+\end{figure}
 
-The main problem with the visual saliency is that it does not perform well on images with a global noise, such as a $XOR$ on the DC coefficients of the luminance channel for example (Fig~\ref{fig:noise}). In an attempt to address this problem, we introduce a second value, computed using the sobel edge detector \cite{}.
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{4.0cm}
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/dc_xor_luminance_76_202012}
+  \caption{\pbox{2.6cm}{\footnotesize{$XOR$ on the luma DC coefficients\label{fig:noise} }}}
+  \label{fig:dc_xor}
+\end{subfigure}%
+\begin{subfigure}{4.0cm}
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/ac_xor_luminance_76_202012}
+  \caption{\pbox{2.6cm}{\footnotesize{$XOR$ on the luma AC coefficients\label{fig:noise} }}}
+  \label{fig:ac_xor}
+\end{subfigure}
+\caption{Global noise caused by a $XOR$ on DCT coefficients\label{fig:vs_bad}}
+\end{figure}
+
+
+% The main problem with the visual saliency is that it does not perform well on images with a global noise, such as a $XOR$ on the DC coefficients of the luminance channel for example (Fig~\ref{fig:noise}). In an attempt to address this problem, we introduce a second value, computed using the sobel edge detector \cite{}.
+
+\paragraph*{}
+% This technique, however intersting on paper, works well for both ends of the MOS spectrum but is not able to predict the MOS for mid-quality images, around a MOS of 2 or 3.
+This technique works well for high or low quality images, where our metric accurately predicts the MOS. The results are however not as good for mid quality images, when the MOS is around 2-3. Because of this, we can only tell that an image is either fully confidential or not very to not confidential at all, but not to which degree it is confidential.
+
+This is due to the fact that we are not able to compute a meaningful saliency map on images with a global, patterned noise, such as such as a $XOR$ on the DC coefficients of the luminance channel for example (Fig~\ref{fig:dc_xor}). Another problem we encountered is that the the visual saliency performs too well on distorted images where the global structure is intact but ..., typically when a $XOR$ is applied to the AC coefficients of the luminance channel (Fig~\ref{fig:ac_xor}).
+
+Because of these two types of distortions, and their variations, using only the visual saliency is not a realistic approach for automatic image evaluation. We introduce a second score, based on the Sobel operator in an attempt to stabilize our first score.
+
+
 
 \section{Conclusion}
 \label{sec:conclusion}
