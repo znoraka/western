@@ -202,7 +202,7 @@ def mssim(cover, stego):
     return (np.prod(mcs[0:level-1]**weight[0:level-1])*
                 (mssim[level-1]**weight[level-1]))
 
-def saliency_score(cover, stego, ess_score = -1):
+def saliency_score(cover, stego, ess_score = -1, sobTh = 10, salTh = 10):
         f = np.vectorize(lambda x, threshold: 0 if (x > threshold) else 1)
 
         cover = np.array(cover)
@@ -260,8 +260,8 @@ def saliency_score(cover, stego, ess_score = -1):
                 t = np.percentile(sob2, 10)
                 sob2 = f(np.uint8(sob2), t)
 
-                sob1 = attack(sob1)
-                sob2 = attack(sob2)
+                # sob1 = attack(sob1)
+                # sob2 = attack(sob2)
 
                 # Image.fromarray(np.uint8(sob2 * 255)).convert('RGB').show()
                 # Image.fromarray(np.uint8(out * 255)).convert('RGB').show()
@@ -301,14 +301,14 @@ def saliency_score(cover, stego, ess_score = -1):
                 # return float(f1(s1, s2).sum()) / float(s1.sum())
                 # return float((s1 == s2).sum()) / float(w * h)
 
-                if ess_score == -1:
-                        ess_score = ess(cover, stego)
+                # if ess_score == -1:
+                        # ess_score = ess(cover, stego)
         
         # return (((func(cover, stego, 1) + func(cover, stego, 2) + func(cover, stego, 4) + func(cover, stego, 8)) * 0.25) + ess_score) * 0.5
         # return (func(cover, stego, 1) + func(cover, stego, 2) + func(cover, stego, 4) + func(cover, stego, 8) + ess_score) * 0.2
         # return (func(cover, stego, 1) + func(cover, stego, 2) + func(cover, stego, 4) + func(cover, stego, 8)) * 0.25
-        return func(cover, stego, 1) * 0.5 + ess_score * 0.5
-        # return func(cover, stego, 1)
+        # return func(cover, stego, 1) * 0.5 + ess_score * 0.5
+        return func(cover, stego, 1)
 
 def create_queries(stego_path, cover_path):
     files = []
@@ -346,6 +346,27 @@ def update_db(stego_path, cover_path, stat, func, score_path = None):
                 res = func(im1, im2, score)
                 f = "'" + f + "'"
                 print "UPDATE stats SET " + stat + "='" + '%.5f'%res + "' WHERE image=" + f + ";"
+
+def create_update_db_files(stego_path, cover_path, stat, func):
+        files = []
+        for (dirpath, dirnames, filenames) in walk(stego_path):
+                files.extend(filenames)
+                break
+
+        for sobTh in range(20):
+                for salTh in range(20):
+                        s = ""
+                        outFile = open("sobTh" + str(sobTh * 5) + "_salTh" + str(salTh * 5) + ".txt", "w+")
+                        print "computing with thresholds", str(sobTh * 5), "and", str(salTh * 5)
+                        for i in range(len(files)):
+                                f = files[i]
+                                im2 = Image.open(stego_path + f)
+                                im1 = Image.open(cover_path + f.split("_")[-1])
+                                res = func(im1, im2, 0, sobTh * 5, salTh * 5)
+                                f = "'" + f + "'"
+                                s += "UPDATE stats SET " + stat + "='" + '%.5f'%res + "' WHERE image=" + f + ";\n"
+                        outFile.write(s)
+                        outFile.close()
         
 def main():
 
@@ -382,7 +403,8 @@ def main():
     # print "ess :", ess(im1, im2)
     
     # create_queries("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/")
-    update_db("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/", "ss", saliency_score, "/home/noe/Documents/dev/cdd/code/image-evaluator/python/out")
+    # update_db("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/", "ss", saliency_score, "/home/noe/Documents/dev/cdd/code/image-evaluator/python/out")
+    create_update_db_files("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/", "ss", saliency_score)
 
 if __name__ == "__main__":
     main()
