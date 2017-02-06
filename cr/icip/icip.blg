@@ -5,45 +5,45 @@ The style file: IEEEbib.bst
 Database file #1: strings.bib
 Database file #2: refs.bib
 Warning--I didn't find a database entry for ""
-You've used 22 entries,
+You've used 23 entries,
             1838 wiz_defined-function locations,
-            604 strings with 7557 characters,
-and the built_in function-call counts, 6498 in all, are:
-= -- 650
-> -- 234
+            610 strings with 7698 characters,
+and the built_in function-call counts, 6626 in all, are:
+= -- 661
+> -- 238
 < -- 10
-+ -- 86
-- -- 64
-* -- 519
-:= -- 947
-add.period$ -- 30
-call.type$ -- 22
-change.case$ -- 21
++ -- 88
+- -- 65
+* -- 525
+:= -- 971
+add.period$ -- 31
+call.type$ -- 23
+change.case$ -- 22
 chr.to.int$ -- 0
-cite$ -- 22
-duplicate$ -- 281
-empty$ -- 622
-format.name$ -- 64
-if$ -- 1501
+cite$ -- 23
+duplicate$ -- 288
+empty$ -- 636
+format.name$ -- 65
+if$ -- 1529
 int.to.chr$ -- 0
-int.to.str$ -- 22
-missing$ -- 23
-newline$ -- 113
-num.names$ -- 22
-pop$ -- 66
+int.to.str$ -- 23
+missing$ -- 24
+newline$ -- 118
+num.names$ -- 23
+pop$ -- 68
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 137
+skip$ -- 140
 stack$ -- 0
 substring$ -- 580
-swap$ -- 104
+swap$ -- 105
 text.length$ -- 10
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 70
-width$ -- 24
-write$ -- 253
+while$ -- 71
+width$ -- 25
+write$ -- 263
 (There was 1 warning)
