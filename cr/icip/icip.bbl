@@ -137,4 +137,9 @@ Laurent Itti, Christof Koch, and Ernst Niebur,
 \newblock {\em IEEE Transactions on pattern analysis and machine intelligence},
   vol. 20, no. 11, pp. 1254--1259, 1998.
 
+\bibitem{sobel1990isotropic}
+Irvin Sobel,
+\newblock ``An isotropic 3$\times$ 3 image gradient operator,''
+\newblock {\em Machine Vision for three-demensional Sciences}, 1990.
+
 \end{thebibliography}

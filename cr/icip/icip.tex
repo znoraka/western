@@ -8,6 +8,7 @@
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{cite}
+% \usepackage[backend=bibtex,firstinits=true]{biblatex}
 
 % Example definitions.
 % --------------------
@@ -34,9 +35,12 @@
 % ----------------------------------------------------------
 \twoauthors
  {No\'{e} Le Philippe, William Puech}
-	{School A-B\\
-	Department A-B\\
-	Address A-B}
+	% {School A-B\\
+	% Department A-B\\
+	% Address A-B}
+ {LIRMM, UMR 5506 CNRS, University of Montpellier\\
+   860 rue de St Priest, Bat. 5,\\
+   34095 Montpellier, FRANCE}
  {Vincent Itier}
 	{School C-D\\
 	Department C-D\\
@@ -51,7 +55,7 @@
 \maketitle
 %
 \begin{abstract}
-For security reasons, more and more digital data are transferred or stored in encrypted domains.  In particular for images, selective format-compliant JPEG encryption methods have been proposed during these last ten years. Since the encryption is selective, in order to reduce the processing time and to be format-compliant, it is thus now necessary to evaluate the confidentiality of these selective crypto-compressed JPEG images. The image quality metrics, such PSNR or SSIM, give a very low correlation with a mean opinion score (MOS). In this paper, we propose an efficient confidentiality metric based on the visual saliency diffusion. We show experimentally that this metric is well correlated with a MOS and efficient for selective crypto-compressed JPEG images.
+For security reasons, more and more digital data is transferred or stored in encrypted domains.  In particular for images, selective format-compliant JPEG encryption methods have been proposed during these last ten years. Since the encryption is selective, in order to reduce the processing time and to be format-compliant, it is thus now necessary to evaluate the confidentiality of these selective crypto-compressed JPEG images. It is known that image quality metrics, such as PSNR or SSIM, give a very low correlation with a mean opinion score (MOS) for low quality images. In this paper, we propose an efficient confidentiality metric based on the visual saliency diffusion. We show experimentally that this metric is well correlated with a MOS and efficient to evaluate the confidentiality of selective crypto-compressed JPEG images.
 \end{abstract}
 %
 \begin{keywords}
@@ -60,25 +64,21 @@ JPEG, confidentiality metric, visual saliency, encryption
 %
 \section{Introduction}
 \label{sec:intro}
-More and more content is being shared everyday on the internet. Some of it needs to be securely transfered, the problem of encryption arises. Full encryption with methods such as AES for example are often not needed in addition to not being possible due to computing power constraints. Instead, partial or selective encryption is used, where the goal is sufficient encryption. % That is, the image is sufficently distorted and an attacker is not able to access the content. This distortion can be of varying magnitude, a strong distortion for exemple for DRM, or a lighter distortion, where the content is still recognizable to attract the viewers interest.
+With the increasing use of social media, more and more pictures are spread, shared and exchanged on the internet. Image quality assessment is divided in two main fields, no reference image quality assessment (NR-IQA), which refers to cases where only the processed image is available, with no extra information, and full reference image quality assessment (FR-IQA), where both the processed and the original images are available.
 
-When an image is intended to be consumed by a human, the most accurate measure of its confidentiality is a Mean Opinion Score (MOS), where actual people rate the image. It is however not a realistic way to rate the distortion of an image as it is way to expensive and time consuming, security and quality metrics were introduced as a means to automate the process.
+The PSNR is the most well known metric, but has been shown not to be well correlated with the human visual system (HVS), especially on low quality images. The SSIM~\cite{wang2004image}, even if better correlated with the HVS, is not consistent across the whole range of image quality. Similar metrics \cite{sheikh2006image, yao2009visual, tong2010visual, sun2011objective} exhibit the same deficiencies, either on low or high quality images, as shown in \cite{hofbauer2016identifying}. There is not yet a confidentiality metric that consistently rates images across all the MOS spectrum. Most quality metrics fail to predict a MOS on low quality images, precisely where it would be most important to do so: decide whether or not an image is confidential. Confidentiality means that a HVS connot understand the image content
 
-Image quality assessment is divided in two main fields, no reference image quality assessment (NR-IQA), which refers to cases where only the processed image is available, with no extra information, and full reference image quality assessment (FR-IQA), where both the processed and the original image are available. In this paper, we focus on FR-IQA and we quality metrics as security metrics, since as explained in Section~\ref{sec:evaluation}, security is achieved through low quality.
-% Image quality assessment is divided in two main fields, no reference image quality assessment (NR-IQA) and full reference image quality assessment (FR-IQA). NR-IQA refers to cases where only the processed image is available without extra information, such as the original image for example. We however focus our work on FR-IQA so we won't get into more details about  NR-IQA.
-% We do not distinguish between security metrics and quality metrics, since in our case they will be used interchangeabley, as we will see in Section~\ref{sec:dataset}, our images range from very low quality, or fully encrypted, to very high quality, with almost no encryption.
-The PSNR is the most well known metric, but has been shown not to be well correlated with the human visual system (HVS), especially on low quality images. The SSIM~\cite{wang2004image}, even if better correlated with the HVS, is not consistent across all image qualities. Similar metrics \cite{sheikh2006image, yao2009visual, tong2010visual, sun2011objective} exhibit the same deficiencies, either on low or high quality images, as shown in \cite{hofbauer2016identifying}, there is not yet a security metric that consistently rates images across all the MOS spectrum. Most quality metrics fail to predict a MOS on low quality images, precisely where it would be most important to do so: decide whether or not an image is confidential.
+The most popular image compression standard is JPEG \cite{wallace1992jpeg}. In order to exploit both efficient compression and encryption, format compliant methods are designed to produce content compatible with format specifications. There exists several format compliant JPEG encryption methods which can be used in this context. Selective encryption methods using sign encryption have been shown insecure by Said \cite{said2005measuring}. Selective encryption can be applied on faces \cite{rodrigues2006selective}. This method which relies on XOR operation with the AES algorithm, performs the compression and the encryption in the same process. Selective encryption is sufficient to hide sensitive information, such as text \cite{pinto2013protection}. Moreover, it has the advantage to not change the size of the encrypted file. A reversible watermarking method in encrypted domain has been proposed by Qian \textit{et al.} \cite{qian2014reversible}. This method relies on XOR operation but for more visual masking, authors encrypt also quantization table. Block and coefficient scrambling is used in \cite{niu2008jpeg, unterweger2012length, minemura2012jpeg, ong2015beyond}. Simple scrambling methods tend to increase the size if there is no verification of the run-length for example. Inter-block shuffle and non-zeros AC scrambles methods have been shown insecure to sketch attack by Li and Yan \cite{li2007leak}.
 
-The most popular image compression standard is JPEG \cite{wallace1992jpeg}. In order to exploit both efficient compression and encryption, format compliant methods are designed to produce content compatible with format specifications. There exists several format compliant JPEG encryption methods which can be used in this context. Partial encryption methods using sign encryption have been shown insecure by Said \cite{said2005measuring}. Partial encryption can be applied selectively on automatically detected faces \cite{rodrigues2006selective}. This method which relies on XOR operation with the AES algorithm, performs the compression and the encryption in the same process. Partial encryption is sufficient to hide sensitive information, such as text \cite{pinto2013protection}. Moreover, it has the advantage to not change the size of the encrypted file. A reversible watermarking method in encrypted domain has been proposed by Qian \textit{et al.} \cite{qian2014reversible}. This method relies on XOR operation but for more visual masking author encrypt also quantization table. Blocks and coefficients scrambling is used in \cite{niu2008jpeg, unterweger2012length, minemura2012jpeg, ong2015beyond}. Simple scrambling methods tend to increase the size if there is no verification of the run-length for example. Inter-block shuffle and non-zeros AC scrambles methods have been shown insecure to sketch attack by Li and Yan \cite{li2007leak}.
+This paper presents a full reference perceptual metric based on visual saliency which assesses image confidentiality after encryption or alteration for example.
+% In this paper, we present our work on a metric based on the visual saliency as a means to evaluate the confidentiality of images.
 
-In this paper, we present our work on a metric based on the visual saliency as a means to evaluate the confidentiality of images.
-
-\paragraph*{}
-Section~\ref{sec:dataset} presents the dataset we used and how it was created. Then, in Section~\ref{sec:evaluation} we discuss the evaluation and rating of its images, by human (MOS) as well as by security metrics. We thus introduce a new metric for image evaluation based on the visual saliency in Section~\ref{sec:metric}. Finally we conclude and open a few perspectives in Section~\ref{sec:conclusion}.
+% \paragraph*{}
+Section~\ref{sec:dataset} presents the dataset we used and how it was created. Then, in Section~\ref{sec:evaluation}, we discuss the evaluation and rating of its images, by human (MOS) as well as by image quality metrics. In Section~\ref{sec:metric}, we present the proposed metric for image evaluation based on the visual saliency. Finally, we conclude and open a few perspectives in Section~\ref{sec:conclusion}.
 
 \section{Creation and utilization of the dataset}
 \label{sec:dataset}
-The cryptocompression method we used is targeted towards JPEG images. We have six parameters that we can enable or not to generate cryptocompressed images. \textit{Shuffle} and \textit{XOR} are the parameters that decide the actual encryption method. \textit{AC} and \textit{DC} control which part of the DCT coefficients is encrypted and two additional parameters, \textit{chrominance} and \textit{luminance} decide which of the luminance, chrominance (or both) DCT coefficients is encrypted. As there must be at least one encryption method, at least one type of coefficient, and chrominance or luminance selected, we have selected a total of 27 distortions by combining these parameters. The distortion ranges from completely indecipherable images to almost invisible perturbations, as shown in Fig. \ref{fig:images}. This way, we hope to have appropriate distortions for different use cases as well as a wide range of distortion for each MOS to show that different perturbation result in the same level of degradation.
+The crypto-compression method we used is targeted towards JPEG images. We have six parameters that we can enable or not to generate selective crypto-compressed images. \textit{Shuffle} and \textit{XOR} are the parameters that decide the actual encryption method. \textit{AC} and \textit{DC} control which part of the DCT coefficients is encrypted and two additional parameters, \textit{chrominance} and \textit{luminance} decide which of the luminance, chrominance (or both) DCT coefficients is encrypted. There must be at least one encryption method, at least one type of coefficient, and chrominance or luminance selected for the image to be affected. This results in 27 combinations obtained by combining these parameters. The distortions range from completely indecipherable images to almost invisible perturbations, as shown in Fig.\ref{fig:images}. This way, we can generate to have appropriate distortions for different use-cases as well as a wide range of distortions to show that different perturbations result in the same level of degradation.
 
 \begin{figure*}[ht]
 \centering
@@ -154,40 +154,44 @@ The cryptocompression method we used is targeted towards JPEG images. We have si
 % \label{fig:images}
 % \end{figure}
 
-The \textit{XOR} parameter corresponds to the method proposed by Puech \textit{et al.} \cite{fernandez2012advanced}. This method partially encrypts an image. This can be useful for partial visualization, even if we only use it on the whole image, and it has two main strengths: it does not increase the size of the JPEG bitstream and it changes the DCT coefficients histogram. We encrypt the amplitude part of non null AC coefficients \textit{i.e.} the concatenation of the amplitude of each coefficient of each block $[A_0^i,..., A_k^i,..., A_0^n,..., A_k^n]$, where $n$ is the number of blocks. The amplitude sequence is denoted $A = [a_0,..., a_l]$ where $l$ is the number of amplitude bits. A standard stream cipher function is used to generate a pseudo-random sequence $E = [e_0,..., e_l]$ from a secret key. This sequence is XORed with the incoming plaintext to produce a ciphered sequence $\widetilde{A} = \widetilde{a}_0,..., \widetilde{a}_l$ where $\widetilde{a}_i = a_i \oplus e_i, i \in [0,l]$. The encrypted sequence is substituted to the amplitudes in the original bitstream.
+The \textit{XOR} parameter corresponds to the selective crypto-compression method proposed by Puech \textit{et al.} \cite{fernandez2012advanced}. This can be useful for low resolution visualization and it has two main strengths: it does not increase the size of the JPEG bitstream and it changes the DCT coefficients histogram. We encrypt the amplitude part of non null AC coefficients \textit{i.e.} the concatenation of the amplitude of each coefficient of each block $[A_0^i,..., A_k^i,..., A_0^n,..., A_k^n]$, where $n$ is the number of blocks. The amplitude sequence is denoted $A = [a_0,..., a_l]$ where $l$ is the number of amplitude bits. A standard stream cipher function is used to generate a pseudo-random sequence $E = [e_0,..., e_l]$ from a secret key. This sequence is XORed with the incoming plaintext to produce a ciphered sequence $\widetilde{A} = \widetilde{a}_0,..., \widetilde{a}_l$ where $\widetilde{a}_i = a_i \oplus e_i, i \in [0,l]$. The encrypted sequence is substituted to the amplitudes in the original bitstream.
 
-The \textit{shuffle} parameter corresponds to a full inter-block shuffle (FIBS), proposed by Li and Yuan \cite{li2007leak}. This method can scramble DC coefficients as well as same frequency AC coefficients. As it scrambles all coefficients, run length encoding does not perform as well and the size of the image can increase. According to the authors, the use of all AC coefficients, zero as well as non-zero, creates a more secure image, less sensitive to jigsaw puzzle attacks \cite{}.
+The \textit{shuffle} parameter corresponds to a full inter-block shuffle (FIBS), proposed by Li and Yuan \cite{li2007leak}. This method scrambles DC coefficients as well as same frequency AC coefficients. As it scrambles all coefficients, run length encoding does not perform as well and the size of the image can increase. According to the authors, the use of all AC coefficients, zero as well as non-zero, creates a more secure image, less sensitive to jigsaw puzzle attacks.
 
-We used the training images from the BSDS500 \cite{amfm_pami2011} dataset as our input images for a total of $27 \times 200 = 5400$ cryptocompressed images, each named after the parameters used for its creation and its original name. The dataset is available at \cite{}.
+We used 200 images from the BSDS500 \cite{amfm_pami2011} dataset as our input images for a total of $27 \times 200 = 5400$ crypto-compressed images, each image named after the parameters used for its creation and its original name. The dataset is available at \cite{}.
 
 % The 27 distortions are given in Appendix \ref{ann:distortions}, they are named according to the parameters enabled and are sorted by MOS, as explained in Section \ref{sec:evaluation}. They are later designated by their number for ease of use.
 
 \section{Image evaluation}
 \label{sec:evaluation}
-We conducted our evaluation on \textit{N} different people. They had to give a score from 1 to 5 to the images, where 5 is the best score and 1 is the worst:\\\\
-\textbf{1 :} The distortion is unbearable, nothing is visible\\
-\textbf{2 :} \small{The distortion is very annoying, I can barely guess the content}\normalsize{}\\
-\textbf{3 :} The distortion is annoying, but I can see the content\\
-\textbf{4 :} The distortion is slightly annoying, but the content is clear\\
-\textbf{5 :} The distortion is not annoying at all \\
+A mean opinion score is an arithmetic mean of ratings given by humans for a particular stimulus. It is a single number, generally from 1 to 5, used to describe the quality of the current stimulus, where 5 is the best score and 1 is the worst. We conducted our evaluation on 41 different people using the following scale:\\\\
+% We conducted our evaluation on \textit{N} different people. The participants had to give a score from 1 to 5 to the images, where 5 is the best score and 1 is the worst:\\\\
+\textbf{1:} The distortion is unbearable, nothing is visible\\
+\textbf{2:} \small{The distortion is very annoying, I can barely guess the content}\normalsize{}\\
+\textbf{3:} The distortion is annoying, but I can see the content\\
+\textbf{4:} The distortion is slightly annoying, but the content is clear\\
+\textbf{5:} The distortion is not annoying at all \\
 
-A score of 1 corresponds to an fully confidential image, where no information about its content is available while a score of 5 corresponds to an image with no apparent distortion, or a high quality image.
+A score of 1 corresponds to a fully confidential image, where no information about its content is available while a score of 5 corresponds to an image with no apparent distortion.%, or a high quality image.
 
-An example of the 5 MOS is illustrated Fig.~\ref{fig:images}. They had to rate 81 images, three for each distortion. The sessions were 10 to 15 minutes long, depending on the person. Each image has been seen at most once by each user, to prevent them from recognizing it and give it a higher score. The distortions order was shuffled differently for each evaluation and repeated three times in the same order. %We chose to have each distortion rated three times because during our preliminary tests, we saw that for the first few images, the user was not confident on the score to give to an image, confidence that improved as they saw more images and distortions. It allowed us to filter the outliers caused by the learning curve while still having a good amount of rating.
+
+An example of the five values for this MOS is illustrated Fig.~\ref{fig:images}. The participants had to rate 81 images picked up randomly from the proposed database, three for each distortion. The sessions were 10 to 15 minutes long, depending on the person. The distortions order was shuffled differently for each evaluation. %We chose to have each distortion rated three times because during our preliminary tests, we saw that for the first few images, the user was not confident on the score to give to an image, confidence that improved as they saw more images and distortions. It allowed us to filter the outliers caused by the learning curve while still having a good amount of rating.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=8.5cm]{figures/mos}
+  \includegraphics[width=8.5cm]{figures/mos_params}
   \vspace{-5mm}
   \caption{MOS for the 27 distortions.\label{fig:mos} }
 \end{figure}
 
-The images were evaluated in a dim room, on a \textit{details of the screen} screen, about $n$ meters away and around eyes level. The user could only see one image at a time, a new image shown once the previous had been rated.
+% LCD "edge LED" / luminosité 450 cd/m2 / contraste 1400:1 / 3840x2160 / 75 inches
+
+The images were evaluated in a dim room, on a $3840\times 2160$, 75 inches Sony screen, about 2.5 meters away and around eyes level. The user could only see one image at a time, a new image shown once the previous had been rated.
 The MOS obtained during the evaluation are given Fig. \ref{fig:mos}. % The name of the distortions are given in Appendix \ref{ann:distortions}.
 We can see that after distortions $\#17$ there is a large gap in the MOS. This is due to the absence of the parameter $luminance$, the $shuffle$ and $XOR$ are only performed on the chrominance, hence the better ratings.
 We give an overview of a few selected metrics we used for image analysis. For a more in-depth review, we refer the reader to \cite{hofbauer2016identifying}.
 
-\textbf{PSNR:} Even though it is known that the PSNR is not well correlated with human judgment, it is still widely used due to its speed and ease of use. The range is [0; $+\infty$], where two identical images would have a PSNR of $+\infty$.
+\textbf{PSNR:} Even though it is known that the PSNR is not well correlated with human judgment, it is still widely used due to its speed and ease of use. The range is [0; $+\infty$[, where two identical images would have a PSNR of $+\infty$.
 
 \textbf{SSIM\cite{wang2004image}:} (Structural Similarity Index Measure). A luminance score, a contrast score and a structure score are combined to obtain the actual SSIM score. It has a range of [0;1] where identical images have a score of 1.
 
@@ -204,7 +208,7 @@ We give an overview of a few selected metrics we used for image analysis. For a 
 % \textbf{Correlation :} The correlation coefficient ranges from 0 to 1, it is the average correlation of adjacent pixels in an image, where a natural image would be highly correlated and a fully encrypted image would have low correlation.
 
 
-Our goal is to predict the rating a human would give to an image. In the best case scenario, a metric would be totally correlated with human rating and could be used to completely replace humans in image evaluation, this is however not the case, at least not for the metrics we selected, as shown in Fig.~\ref{fig:plots}.
+Our goal is to predict which rating a human would give to an image. In the best case scenario, a metric would be totally correlated with human rating and could be used to completely replace humans in image evaluation, this is however not the case, as shown in Fig.~\ref{fig:plots}.
 
 \begin{figure}[ht]
 \centering
@@ -288,7 +292,7 @@ Our goal is to predict the rating a human would give to an image. In the best ca
 %   \caption{MOS on the x-axis and horizontal correlation on the y-axis\label{fig:correlation} }
 % \end{figure}
 
-As we can see from these figures, most metrics actually follow a rough line, but distortions $5$ to $17$ are problematic and prevent us from predicting the MOS. These distortions also happen to be between a MOS of 2 and 3, where the threshold for a confidential image would be. Even the SSIM, which is the most accurate metric in our experiment, fails to predict the MOS.%, as shown in Fig.~\ref{fig:sub4}. The SSIM ranges from 0 to 1, and from Fig.~\ref{fig:sub4}, we can see that for the same MOS the SSIM goes across almost all its range. A similar behavior is seen for the other metrics.
+As we can see from Fig.~\ref{fig:plots}, most metrics actually follow a rough line, but distortions $5$ to $17$ are problematic and prevent us from predicting the MOS. These distortions also happen to be between a MOS of 2 and 3, where the threshold for a confidential image would be. Even the SSIM, which is the most accurate metric in our experiment, fails to predict the MOS.%, as shown in Fig.~\ref{fig:sub4}. The SSIM ranges from 0 to 1, and from Fig.~\ref{fig:sub4}, we can see that for the same MOS the SSIM goes across almost all its range. A similar behavior is seen for the other metrics.
 
 % \begin{figure}[ht]
 %   \centering
@@ -375,17 +379,16 @@ As we can see from these figures, most metrics actually follow a rough line, but
 
 \section{Visual saliency as a means to evaluate image}
 \label{sec:metric}
-In this section, we present the new metric we designed, the results we obtained and their analysis. Our metric is based on the visual saliency in images, and more specifically, and saliency map, a grayscale image where less salient pixels are darker than more salient pixels in the original image. The visual saliency is interesting in our case for image quality assessment because we want to know whether the meaning of the content of an image is accessible. According to \cite{itti1998model}, important information is located in salient areas. Our reasoning is twofold: if salient areas are consistent in both the original and the processed image, the same amount of information is present in the images and the content is readily available, and if no salient areas can be found, as important information is located in salient areas, then the content is hidden. We try to compute to which extent the visual saliency of two images are similar to extract a score.
+In this section, we present the new metric we designed, results obtained and we analyze them. Our metric is based on the visual saliency in images, and saliency map. The visual saliency is interesting in our case for image quality assessment because we want to know whether the meaning of the content of an image is understandable. According to \cite{itti1998model}, important information is located in salient areas. Our reasoning is twofold: if salient areas are consistent in both the original and the processed image, the same amount of information is present in the images and the content is readily available, and if no salient areas can be found then the content is hidden. We try to compute to which extent the visual saliency of two images are similar to extract a score.
 
 \paragraph*{}
-Let $M_o$  be the saliency map of the original image and $M_p$ be the saliency map of the processed image. A threshold is applied to $M_o$ and $M_p$ to only keep the most salient areas of each image, the best threshold has been experimentally found (Fig.~\ref{}) to be $5\%$ more salient areas. Two binary images are thus created, $B_o$ from $M_o$ and $B_p$ from $M_p$. A first value is computed as such:
+Let $M_o$  be the saliency map of the original image and $M_c$ be the saliency map of the crypto-compressed image. A threshold is applied to $M_o$ and $M_c$ to only keep the most salient areas of each image, the best threshold has been experimentally found (Fig.~\ref{fig:sobsal}) to be $15\%$ more salient areas, it is the point with the highest correlation with the MOS. Two binary images are thus created, $B_o$ from $M_o$ and $B_c$ from $M_c$. A first value is computed as such:
 
 \begin{equation}
   \label{eqn:eqn}
-  v = \frac{\sum_{i=0}^{width}\sum_{j=0}^{height}{B_o(i,j) \times B_p(i,j)}}{sum(B_o)},
+  v_{saliency} = \frac{\sum_{i=0}^{width}\sum_{j=0}^{height}{B_o(i,j) \times B_c(i,j)}}{sum(B_o)},
 \end{equation}
-
-where $B_o(i,j) \times B_p(i,j)$ is equal to 1 when both pixels are equal to 1 and $sum(B_o)$ is the number of pixels of value 1 in the bitmap of the original image.
+where $B_o(i,j) \times B_c(i,j)$ is equal to 1 when both pixels are equal to 1 and $sum(B_o)$ is the number of pixels of value 1 in of the original image.
 
 \paragraph*{}
 \begin{figure}
@@ -393,34 +396,92 @@ where $B_o(i,j) \times B_p(i,j)$ is equal to 1 when both pixels are equal to 1 a
 \begin{subfigure}{4.0cm}
   \centering
   \includegraphics[width=0.95\linewidth]{figures/dc_xor_luminance_76_202012}
-  \caption{\pbox{2.6cm}{\footnotesize{$XOR$ on the luma DC coefficients\label{fig:noise} }}}
+  \caption{\pbox{2.6cm}{\footnotesize{$XOR$ on the luma DC coefficients}}}
   \label{fig:dc_xor}
 \end{subfigure}%
 \begin{subfigure}{4.0cm}
   \centering
   \includegraphics[width=0.95\linewidth]{figures/ac_xor_luminance_76_202012}
-  \caption{\pbox{2.6cm}{\footnotesize{$XOR$ on the luma AC coefficients\label{fig:noise} }}}
+  \caption{\pbox{2.6cm}{\footnotesize{$XOR$ on the luma AC coefficients}}}
   \label{fig:ac_xor}
 \end{subfigure}
-\caption{Global noise caused by a $XOR$ on DCT coefficients\label{fig:vs_bad}}
+\caption{Global noise caused by a $XOR$ on DCT coefficients.\label{fig:vs_bad}}
 \end{figure}
 
+\paragraph*{}
+\begin{figure}
+  \centering
+  \vspace{-5mm}
+\begin{subfigure}{4.0cm}
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/euclidian}
+  \caption{\pbox{2.6cm}{\footnotesize{Euclidean distance of MOS and metric for different thresholds\label{fig:sobsal} }}}
+\end{subfigure}%
+\begin{subfigure}{4.0cm}
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/euclidian_th}
+  \caption{\pbox{2.6cm}{\footnotesize{Euclidean distance of MOS and metric for different weights\label{fig:weights} }}}
+\end{subfigure}
+\caption{Plots of different parameters to determine the best ones.\label{fig:thresholds}}
+\end{figure}
 
 % The main problem with the visual saliency is that it does not perform well on images with a global noise, such as a $XOR$ on the DC coefficients of the luminance channel for example (Fig~\ref{fig:noise}). In an attempt to address this problem, we introduce a second value, computed using the sobel edge detector \cite{}.
 
-\paragraph*{}
+% \paragraph*{}
 % This technique, however intersting on paper, works well for both ends of the MOS spectrum but is not able to predict the MOS for mid-quality images, around a MOS of 2 or 3.
-This technique works well for high or low quality images, where our metric accurately predicts the MOS. The results are however not as good for mid quality images, when the MOS is around 2-3. Because of this, we can only tell that an image is either fully confidential or not very to not confidential at all, but not to which degree it is confidential.
+% \vspace{-25mm}
+The proposed metrics as gives good results for either high or low quality images, where it is able to predict the MOS. The results are however not as good for mid quality images, when the MOS is around 2 and 3. Because of this, we can only tell that an image is either fully confidential or not very to not confidential at all, but not to which degree it is confidential.
 
-This is due to the fact that we are not able to compute a meaningful saliency map on images with a global, patterned noise, such as such as a $XOR$ on the DC coefficients of the luminance channel for example (Fig.~\ref{fig:dc_xor}). Another problem we encountered is that the visual saliency performs too well on distorted images where the global structure is intact but the fine grained details are not available, typically when a $XOR$ is applied to the AC coefficients of the luminance channel (Fig.~\ref{fig:ac_xor}).
+This is due to the fact that we are not able to compute a meaningful saliency map on images with a global, patterned noise, such as such as an $XOR$ on the DC coefficients of the luminance channel for example (Fig.~\ref{fig:dc_xor}). Another problem we encountered is that the visual saliency performs too well on distorted images where the global structure is intact but the fine grained details are not available, typically when an $XOR$ is applied to the AC coefficients of the luminance channel (Fig.~\ref{fig:ac_xor}).
 
-Because of these two types of distortions, and their variations, using only the visual saliency is not a realistic approach for automatic image evaluation. We introduce a second score, based on the Sobel operator in an attempt to stabilize our first score.
+Because of these two types of distortions, and their variations, using only the visual saliency is not a realistic approach for an image confidentiality metric. We introduce a second score, $v_{edges}$, based on the Sobel operator~\cite{sobel1990isotropic} in an attempt to stabilize our first score.
 
-Distortions such as Fig.~\ref{fig:dc_xor} do not hinder the edges detection, making it a good candidate to balance the visual saliency defects. Our second score is computed the same way as our first one. Two maps $S_o$ and $S_p$ are computed using the Sobel operator for the original and processed image. A threshold is then applied to $S_o$ and $S_p$ to only keep the most ??? edges, thus creating two other bitmaps. Our second score is then obtained just like Eqn~\ref{eqn:eqn}, it is the ratio of equal pixels of value 1 in both bitmaps over the total number of pixels of value 1 in the bitmap of the original image. The final score is then obtained by averaging both scores.
+Distortions such as Fig.~\ref{fig:dc_xor} do not hinder the edges detection, making it a good candidate to balance the visual saliency defects. Our second score is computed the same way as our first one: two maps $S_o$ and $S_p$ are computed using the Sobel operator for the original and processed image. A threshold is then applied to $S_o$ and $S_p$ to only keep the strongest edges, thus creating two other bitmaps, the threshold has been experimentally found to be $10\%$ of the edges (Fig.~\ref{fig:sobsal}). Our second score is then obtained just like Eqn~\ref{eqn:eqn}, it is the ratio of the number of same position pixels of value 1 in both bitmaps over the total number of pixels of value 1 in the bitmap of the original image. The final score is $v = \alpha * v_{saliency} + (1 - \alpha) * v_{edges}$. The weight $\alpha$ was experimentally determined to be $0.6$, as shown in Fig.~\ref{fig:weights}.
 
+\begin{figure}
+\centering
+\begin{subfigure}{4.4cm}
+  \centering
+  \includegraphics[width=0.98\linewidth]{figures/ss_good_small}
+  \caption{\pbox{2.8cm}{\footnotesize{Scores obtained with our metric, sorted on the image distortion MOS\label{fig:results_ss}}}}
+\end{subfigure}%
+\begin{subfigure}{4.4cm}
+  \centering
+  \includegraphics[width=0.98\linewidth]{figures/ssim_good_small}
+  \caption{\pbox{2.8cm}{\footnotesize{Scores obtained with SSIM, sorted on the image distortion MOS\label{fig:results_ssim}}}}
+\end{subfigure}
+\caption{Comparison of results for our metric and SSIM\label{fig:scores}}
+\end{figure}
+
+\paragraph*{}
+% The results we obtained after running our metric on our dataset are available Fig.~\ref{fig:results_ss}, with Fig.~\ref{fig:results_ssim}, the SSIM, for comparison. The correlation of our metric with the MOS of every distortion is $0.9349$ for our metric and $0.9258$ for SSIM and the correlation of our metric with individual image rating is $0.82961$ and $0.8232$ for SSIM.
+The results we obtained after running our metric on our dataset are available Fig.~\ref{fig:results_ss}, with Fig.~\ref{fig:results_ssim}, the SSIM, for comparison. The euclidean distance of our metric to the MOS of every distortion is $0.4323$ for our metric and $0.5095$ for SSIM and the euclidean distance of our metric to individual image rating is $0.6674$ and $0.6699$ for SSIM.
+
+% \paragraph*{}
+
+\begin{figure}
+\centering
+\begin{subfigure}{4.3cm}
+  \centering
+  \includegraphics[width=0.99\linewidth]{figures/roc_ss}
+  \caption{\pbox{2.9cm}{\footnotesize{ROC curve of our metric\label{fig:roc_ss} }}}
+\end{subfigure}%
+\begin{subfigure}{4.3cm}
+  \centering
+  \includegraphics[width=0.99\linewidth]{figures/roc_ssim}
+  \caption{\pbox{2.9cm}{\footnotesize{ROC curve of SSIM\label{fig:roc_ssim} }}}
+\end{subfigure}
+\caption{ROC curves of our metric and SSIM.\label{fig:rocs}}
+\end{figure}
+
+The threshold for a confidential image would be between a MOS of 2 and 3. We used our metric as a classifier to try and decide whether images are confidential, the results are available Fig.~\ref{fig:rocs}.
 
 \section{Conclusion}
 \label{sec:conclusion}
+
+In this paper we proposed a dataset composed of selective encrypted images for automatic image quality assessment. The images were rated by human observers to obtain a mean opinion score. We also introduced a new image quality metric based on the visual saliency. Our dataset was used as a benchmark to evaluate our metric and we saw that we obtained results at on par with the SSIM.
+
+Future work would be a more in depth analysis of our dataset and each of its 27 distortions, as well as a more refined metric based on the visual saliency, which showed great potential.
 
 \newpage
 \bibliographystyle{IEEEbib}
