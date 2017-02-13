@@ -236,15 +236,15 @@ def saliency_score(cover, stego, ess_score = -1, sobTh = 10, salTh = 10):
                 # cover = cover.resize(((cover.size[0] / scale, cover.size[1] / scale)), Image.ANTIALIAS)
                 # stego = stego.resize(((stego.size[0] / scale, stego.size[1] / scale)), Image.ANTIALIAS)
                 
-                s1 = Saliency(cover, use_numpy_fft=False, gauss_kernel=(5, 5)).get_saliency_map()
-                s2 = Saliency(stego, use_numpy_fft=False, gauss_kernel=(5, 5)).get_saliency_map()
+                s1 = Saliency(cover, use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
+                s2 = Saliency(stego, use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
 
                 # Image.fromarray(s1*255).show()
                 # Image.fromarray(s2*255).show()
                
-                t = np.percentile(s1, 10)
+                t = np.percentile(s1, 70)
                 s1 = f(s1, t)
-                t = np.percentile(s2, 10)
+                t = np.percentile(s2, 70)
                 s2 = f(s2, t)
                 
                 cover = rgb2gray(cover)
@@ -254,10 +254,10 @@ def saliency_score(cover, stego, ess_score = -1, sobTh = 10, salTh = 10):
                 sob2 = sobel(stego)
 
 
-                t = np.percentile(sob1, 10)
+                t = np.percentile(sob1, 40)
                 sob1 = f(np.uint8(sob1), t)
         
-                t = np.percentile(sob2, 10)
+                t = np.percentile(sob2, 40)
                 sob2 = f(np.uint8(sob2), t)
 
                 # sob1 = attack(sob1)
@@ -273,13 +273,13 @@ def saliency_score(cover, stego, ess_score = -1, sobTh = 10, salTh = 10):
                 # sob2 = ndimage.morphology.binary_erosion(sob2, iterations=2)
                 # sob2 = ndimage.morphology.binary_dilation(sob2, iterations=2)
                 
-                # Image.fromarray(np.uint8(s1 * 255)).convert('RGB').save("/media/ramdisk/s1.png")
-                # Image.fromarray(cover).convert('RGB').save("/media/ramdisk/cover.png")
-                # Image.fromarray(np.uint8(sob1 * 255)).convert('RGB').save("/media/ramdisk/sob1.png")
+                Image.fromarray(np.uint8(s1 * 255)).convert('RGB').save("/media/ramdisk/s1.png")
+                Image.fromarray(cover).convert('RGB').save("/media/ramdisk/cover.png")
+                Image.fromarray(np.uint8(sob1 * 255)).convert('RGB').save("/media/ramdisk/sob1.png")
                 
-                # Image.fromarray(np.uint8(s2 * 255)).convert('RGB').save("/media/ramdisk/s2.png")
-                # Image.fromarray(stego).convert('RGB').save("/media/ramdisk/stego.png")
-                # Image.fromarray(np.uint8(sob2 * 255)).convert('RGB').save("/media/ramdisk/sob2.png")
+                Image.fromarray(np.uint8(s2 * 255)).convert('RGB').save("/media/ramdisk/s2.png")
+                Image.fromarray(stego).convert('RGB').save("/media/ramdisk/stego.png")
+                Image.fromarray(np.uint8(sob2 * 255)).convert('RGB').save("/media/ramdisk/sob2.png")
                 
                 # print s1.sum(), s2.sum(), float(s2.sum()) / float(s1.sum())
 
@@ -353,32 +353,35 @@ def create_update_db_files(stego_path, cover_path, stat, func):
                 files.extend(filenames)
                 break
 
-        for sobTh in range(20):
-                for salTh in range(20):
-                        s = ""
-                        outFile = open("sobTh" + str(sobTh * 5) + "_salTh" + str(salTh * 5) + ".txt", "w+")
-                        print "computing with thresholds", str(sobTh * 5), "and", str(salTh * 5)
-                        for i in range(len(files)):
-                                f = files[i]
-                                im2 = Image.open(stego_path + f)
-                                im1 = Image.open(cover_path + f.split("_")[-1])
-                                res = func(im1, im2, 0, sobTh * 5, salTh * 5)
-                                f = "'" + f + "'"
-                                s += "UPDATE stats SET " + stat + "='" + '%.5f'%res + "' WHERE image=" + f + ";\n"
-                        outFile.write(s)
-                        outFile.close()
+        # for sobTh in range(20):
+                # for salTh in range(20):
+        for th in range(1,10):
+                s = ""
+                # outFile = open("sobTh" + str(sobTh * 5) + "_salTh" + str(salTh * 5) + ".txt", "w+")
+                outFile = open("th" + str(th*0.1) + ".txt", "w+")
+                print "computing with threshold", str(th * 0.1)
+                for i in range(len(files)):
+                        f = files[i]
+                        im2 = Image.open(stego_path + f)
+                        im1 = Image.open(cover_path + f.split("_")[-1])
+                        res = func(im1, im2, 0, th * 0.1, 1)
+                        # res = func(im1, im2, 0, sobTh * 5, salTh * 5)
+                        f = "'" + f + "'"
+                        s += "UPDATE stats SET " + stat + "='" + '%.5f'%res + "' WHERE image=" + f + ";\n"
+                outFile.write(s)
+                outFile.close()
         
 def main():
 
     # name = "2092"
-    # name = "35058"
+    name = "35058"
     # name = "8143"
     
-    # im1 = Image.open("/home/noe/Documents/dev/cdd/dataset/train/" + name + ".jpg")
+    im1 = Image.open("/home/noe/Documents/dev/cdd/dataset/train/" + name + ".jpg")
     # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_xor_luminance_76_100098.jpg")
     # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_shuffle_xor_chrominance_luminance_76_100098.jpg")
     # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/dc_xor_luminance_76_202012.jpg")
-    # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_dc_shuffle_luminance_76_" + name + ".jpg")
+    im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/ac_dc_shuffle_luminance_76_" + name + ".jpg")
     # im2 = Image.open("/home/noe/Documents/dev/cdd/dataset/d1/dc_xor_luminance_76_2092.jpg")
     # im1 = Image.open("/home/noe/Downloads/Noise.jpg")
     # im2 = Image.open("/home/noe/Downloads/Noise.jpg")
@@ -388,7 +391,7 @@ def main():
     # saliency_map(im1).show("im1")
     # saliency_map(im2).show("im2")
     
-    # print "saliency score =", saliency_score(im1, im2)
+    print "saliency score =", saliency_score(im1, im2, 0.6, 10, 15)
     
     # print "psnr :", psnr(im1, im2)
     # print "npcr :", npcr(im1, im2)
@@ -404,7 +407,7 @@ def main():
     
     # create_queries("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/")
     # update_db("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/", "ss", saliency_score, "/home/noe/Documents/dev/cdd/code/image-evaluator/python/out")
-    create_update_db_files("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/", "ss", saliency_score)
+    # create_update_db_files("/home/noe/Documents/dev/cdd/dataset/d1/", "/home/noe/Documents/dev/cdd/dataset/train/", "ss", saliency_score)
 
 if __name__ == "__main__":
     main()
