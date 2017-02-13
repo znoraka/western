@@ -165,14 +165,19 @@ def ssim(cover, stego, cs_map=False):
     L = 255 #bitdepth of image
     C1 = (K1*L)**2
     C2 = (K2*L)**2
-    mu1 = signal.fftconvolve(window, cover, mode='valid')
-    mu2 = signal.fftconvolve(window, stego, mode='valid')
+    mu1 = signal.fftconvolve(cover, window, mode='valid')
+    mu2 = signal.fftconvolve(stego, window, mode='valid')
+    # mu1 = signal.fftconvolve(window, cover, mode='valid')
+    # mu2 = signal.fftconvolve(window, stego, mode='valid')
     mu1_sq = mu1*mu1
     mu2_sq = mu2*mu2
     mu1_mu2 = mu1*mu2
-    sigma1_sq = signal.fftconvolve(window, cover*cover, mode='valid') - mu1_sq
-    sigma2_sq = signal.fftconvolve(window, stego*stego, mode='valid') - mu2_sq
-    sigma12 = signal.fftconvolve(window, cover*stego, mode='valid') - mu1_mu2
+    sigma1_sq = signal.fftconvolve(cover*cover, window, mode='valid') - mu1_sq
+    sigma2_sq = signal.fftconvolve(stego*stego, window, mode='valid') - mu2_sq
+    sigma12 = signal.fftconvolve(cover*stego, window, mode='valid') - mu1_mu2
+    # sigma1_sq = signal.fftconvolve(window, cover*cover, mode='valid') - mu1_sq
+    # sigma2_sq = signal.fftconvolve(window, stego*stego, mode='valid') - mu2_sq
+    # sigma12 = signal.fftconvolve(window, cover*stego, mode='valid') - mu1_mu2
     if cs_map:
         return (((2*mu1_mu2 + C1)*(2*sigma12 + C2))/((mu1_sq + mu2_sq + C1)*
                     (sigma1_sq + sigma2_sq + C2)), 
@@ -236,15 +241,15 @@ def saliency_score(cover, stego, ess_score = -1, sobTh = 10, salTh = 10):
                 # cover = cover.resize(((cover.size[0] / scale, cover.size[1] / scale)), Image.ANTIALIAS)
                 # stego = stego.resize(((stego.size[0] / scale, stego.size[1] / scale)), Image.ANTIALIAS)
                 
-                s1 = Saliency(cover, use_numpy_fft=False, gauss_kernel=(5, 5)).get_saliency_map()
-                s2 = Saliency(stego, use_numpy_fft=False, gauss_kernel=(5, 5)).get_saliency_map()
+                s1 = Saliency(cover, use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
+                s2 = Saliency(stego, use_numpy_fft=False, gauss_kernel=(3, 3)).get_saliency_map()
 
                 # Image.fromarray(s1*255).show()
                 # Image.fromarray(s2*255).show()
                
-                t = np.percentile(s1, 10)
+                t = np.percentile(s1, salTh)
                 s1 = f(s1, t)
-                t = np.percentile(s2, 10)
+                t = np.percentile(s2, salTh)
                 s2 = f(s2, t)
                 
                 cover = rgb2gray(cover)
@@ -254,10 +259,10 @@ def saliency_score(cover, stego, ess_score = -1, sobTh = 10, salTh = 10):
                 sob2 = sobel(stego)
 
 
-                t = np.percentile(sob1, 10)
+                t = np.percentile(sob1, sobTh)
                 sob1 = f(np.uint8(sob1), t)
         
-                t = np.percentile(sob2, 10)
+                t = np.percentile(sob2, sobTh)
                 sob2 = f(np.uint8(sob2), t)
 
                 # sob1 = attack(sob1)
@@ -289,7 +294,7 @@ def saliency_score(cover, stego, ess_score = -1, sobTh = 10, salTh = 10):
                 # print float(f1(s1, s2).sum()) / float(s1.sum()), float(f1(sob1, sob2).sum()) / float(sob1.sum()), (float(f1(sob1, sob2).sum()) / float(sob1.sum()) + float(f1(s1, s2).sum()) / float(s1.sum())) * 0.5
                 # return float(f1(sob1, sob2).sum()) / float(sob1.sum())
                 
-                return (float(np.multiply(sob1, sob2).sum()) / float(sob1.sum())) * 0.5 + (float(np.multiply(s1, s2).sum()) / float(s1.sum())) * 0.5
+                return (float(np.multiply(sob1, sob2).sum()) / float(sob1.sum())) * ess_score + (float(np.multiply(s1, s2).sum()) / float(s1.sum())) * (1 - ess_score)
                 # return (float(np.multiply(sob1, sob2).sum())) / float(sob1.sum())
 
                 # return float(np.multiply(s1, s2).sum()) / float(s1.sum())
@@ -353,20 +358,23 @@ def create_update_db_files(stego_path, cover_path, stat, func):
                 files.extend(filenames)
                 break
 
-        for sobTh in range(20):
-                for salTh in range(20):
-                        s = ""
-                        outFile = open("sobTh" + str(sobTh * 5) + "_salTh" + str(salTh * 5) + ".txt", "w+")
-                        print "computing with thresholds", str(sobTh * 5), "and", str(salTh * 5)
-                        for i in range(len(files)):
-                                f = files[i]
-                                im2 = Image.open(stego_path + f)
-                                im1 = Image.open(cover_path + f.split("_")[-1])
-                                res = func(im1, im2, 0, sobTh * 5, salTh * 5)
-                                f = "'" + f + "'"
-                                s += "UPDATE stats SET " + stat + "='" + '%.5f'%res + "' WHERE image=" + f + ";\n"
-                        outFile.write(s)
-                        outFile.close()
+        # for sobTh in range(20):
+                # for salTh in range(20):
+        for th in range(1,10):
+                s = ""
+                # outFile = open("sobTh" + str(sobTh * 5) + "_salTh" + str(salTh * 5) + ".txt", "w+")
+                outFile = open("th" + str(th*0.1) + ".txt", "w+")
+                print "computing with threshold", str(th * 0.1)
+                for i in range(len(files)):
+                        f = files[i]
+                        im2 = Image.open(stego_path + f)
+                        im1 = Image.open(cover_path + f.split("_")[-1])
+                        res = func(im1, im2, 0, th * 0.1, 1)
+                        # res = func(im1, im2, 0, sobTh * 5, salTh * 5)
+                        f = "'" + f + "'"
+                        s += "UPDATE stats SET " + stat + "='" + '%.5f'%res + "' WHERE image=" + f + ";\n"
+                outFile.write(s)
+                outFile.close()
         
 def main():
 

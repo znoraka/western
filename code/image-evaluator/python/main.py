@@ -2,12 +2,17 @@
 
 import MySQLdb as mdb
 import sys
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 from sets import Set
 from PIL import Image
-sys.path.insert(0, '/home/noe/Documents/dev/test/')
+from scipy.stats.stats import pearsonr   
+sys.path.insert(0, '/home/noe/dev/tests')
+sys.path.insert(0, '/home/noe/dev/western/code/kivy')
 import sql
+import stats
 
 def get_filtered_mos(db, distortions):
     l = []
@@ -104,7 +109,10 @@ def plot_mos_stat(db, distortions, stat, twin=False):
     m, c = np.linalg.lstsq(A, stats[:,0])[0]
     l = map(lambda x: m * x + c, range(1,6))
 
-    # distance_to_line(m, c, stats, mos)
+    dist = np.abs(np.array(distance_to_line(m, c, stats, mos))).sum()
+    a = (stats[:,0].astype(float) * 4 + 1)
+    b = mos[:,0].astype(float)
+    print dist, np.correlate(a,b)[0], pearsonr(a,b)[0]
 
     plt.ylabel(stat, color=c1)
     for i in range(len(distortions)):
@@ -196,7 +204,110 @@ def stat_cloud(db, distortions, stat, stat_range=[0,1]):
             plt.plot(r[1], res[0], 'o')
 
         plt.savefig("images/" + stat + "_" + d + ".png")
+
+def compute_res(db, stat, dataset_path, d):
+    res = np.unique(np.array(db.query("SELECT name FROM opinion")))
+    m = {}
+
+    for i in d:
+        m[i[2]] = i[0]
+
+    f = open('results2', 'w+')
+
+    # for i in range(1,5):
+    #     for j in range(1,5):
+    #         l = []
+    #         for img in res:
+    #         # for k in range(len(res)):
+    #         #     print k
+    #         #     img = res[k]
+    #             distortion = img.split("_76")[0]
+    #             note = np.mean(np.array(db.query("SELECT note FROM opinion WHERE name='" + img + "'")))
+    #             stego = dataset_path + "/d1/" + img
+    #             cover = dataset_path + "/train/" + img.split("_")[-1]
+    #             score = stats.saliency_score(Image.open(cover), Image.open(stego), 1, i * 5, j * 5) * 4 + 1
+    #             # score = stats.ssim(Image.open(cover), Image.open(stego)) * 4 + 1
+    #             # print note, score, m[distortion], img
+    #             # print note, score, m[distortion]
+    #             l.append([note, score, m[distortion]])
                 
+    #         l = np.array(l).astype(float)
+    #         f.write(str(i * 5) + " " + str(j * 5) + " " + str(pearsonr(l[:,0],l[:,1])[0]) + " " + str(pearsonr(l[:,2],l[:,1])[0]) + "\n")
+    #         print i * 5, j * 5, pearsonr(l[:,0],l[:,1])[0], pearsonr(l[:,2],l[:,1])[0], np.abs(l[:,0] - l[:,1]).sum() / len(l[:,0]), np.abs(l[:,2] - l[:,1]).sum() / len(l[:,0])
+    # f.close()
+    
+    # for i in range(1,10):
+    #     f = open(str(i * 0.1) + ".txt", 'w+')
+    #     l = []
+    #     for img in res:
+    #     # for k in range(10):
+    #     #     print k
+    #     #     img = res[k]
+    #         distortion = img.split("_76")[0]
+    #         note = np.mean(np.array(db.query("SELECT note FROM opinion WHERE name='" + img + "'")))
+    #         stego = dataset_path + "/d1/" + img
+    #         cover = dataset_path + "/train/" + img.split("_")[-1]
+    #         score = stats.saliency_score(Image.open(cover), Image.open(stego), i * 0.1, 10, 15) * 4 + 1
+    #         # score = stats.ssim(Image.open(cover), Image.open(stego)) * 4 + 1
+    #         # print note, score, m[distortion], img
+    #         f.write(str(note) + " " + str(score) + " " + str(m[distortion]) + " " + str(img) + "\n")
+    #         # print note, score, m[distortion]
+    #         l += [[float(note), float(score), float(m[distortion])]]
+            
+    #     l = np.array(l).astype(float)
+    #     x = np.array(l[:,0]).astype(float)
+    #     y = np.array(l[:,1]).astype(float)
+    #     z = np.array(l[:,2]).astype(float)
+        
+    #     f.write(str(i * 0.1) + " " + str(pearsonr(x,y)[0]) + " " + str(pearsonr(z,y)[0]) + " " + str(np.abs(x - y).sum() / len(x)) + " " + str(np.abs(z - y).sum() / len(x)) + "\n")
+    #     f.close()
+    #     print pearsonr(x,y), pearsonr(z,y), np.abs(x - y).sum() / len(x), np.abs(z - y).sum() / len(x)
+        # l = np.array(l).astype(float)
+        # f.write(str(i * 0.1) + " " + str(pearsonr(l[:,0],l[:,1])[0]) + " " + str(pearsonr(l[:,2],l[:,1])[0]) + "\n")
+        # f.close()
+        # print i * 0.1, pearsonr(l[:,0],l[:,1]), pearsonr(l[:,2],l[:,1])
+
+    f = open("res.txt", 'w+')
+    l = []
+    for img in res:
+        # for k in range(10):
+        #     print k
+        #     img = res[k]
+        distortion = img.split("_76")[0]
+        note = np.mean(np.array(db.query("SELECT note FROM opinion WHERE name='" + img + "'")))
+        stego = dataset_path + "/d1/" + img
+        cover = dataset_path + "/train/" + img.split("_")[-1]
+        # score = stats.saliency_score(Image.open(cover), Image.open(stego), 0.6, 10, 15) * 4 + 1
+        score = stats.ssim(Image.open(cover), Image.open(stego)) * 4 + 1
+        print note, score, m[distortion], img
+        f.write(str(note) + " " + str(score) + " " + str(m[distortion]) + " " + str(img) + "\n")
+        # print note, score, m[distortion]
+        l += [[float(note), float(score), float(m[distortion])]]
+        
+    l = np.array(l).astype(float)
+    x = np.array(l[:,0]).astype(float)
+    y = np.array(l[:,1]).astype(float)
+    z = np.array(l[:,2]).astype(float)
+    
+    f.write(str(pearsonr(x,y)[0]) + " " + str(pearsonr(z,y)[0]) + " " + str(np.abs(x - y).sum() / len(x)) + " " + str(np.abs(z - y).sum() / len(x)) + "\n")
+    f.close()
+    print pearsonr(x,y), pearsonr(z,y), np.abs(x - y).sum() / len(x), np.abs(z - y).sum() / len(x)
+
+def roc(db, stat, dataset_path, d):
+    res = np.unique(np.array(db.query("SELECT name FROM opinion")))
+    m = {}
+    
+    for i in d:
+        m[i[2]] = i[0]
+
+        for img in res:
+            # for k in range(10):
+            #     print k
+            #     img = res[k]
+            distortion = img.split("_76")[0]
+
+
+        
 def main():
     db = sql.db()
     distortions = [
@@ -231,46 +342,48 @@ def main():
 
     d = plot_mos(db, distortions)
 
-    for a in zip(range(len(d)), d):
-        print a
-
-    plt.clf()
-    plot_mos_stat(db, d, "ss")
-
-    plt.clf()
-    plot_mos_stat(db, d, "ess") 
-
-    plt.clf()
-    plot_mos_stat(db, d, "ss")
-    plot_mos_stat(db, d, "ssim", True)
+    # for a in zip(range(len(d)), d):
+    #     print a
 
     # plt.clf()
-    # plot_mos_stat(db, d, "psnr")
+    # plot_mos_stat(db, d, "ss")
+
+    # plt.clf()
+    # plot_mos_stat(db, d, "ess") 
+
+    # plt.clf()
+    # plot_mos_stat(db, d, "ssim")
     # plot_mos_stat(db, d, "ssim", True)
 
-    plt.clf()
-    plot_mos_stat(db, d, "corr_horiz")
-    plot_mos_stat(db, d, "corr_vert", True)
-
-    plt.clf()
-    plot_mos_stat(db, d, "uaci")
-    plot_mos_stat(db, d, "npcr", True)
-    # # plot_mos_stat(db, d, "chisquare")
+    # # plt.clf()
+    # # plot_mos_stat(db, d, "psnr")
+    # # plot_mos_stat(db, d, "ssim", True)
 
     # plt.clf()
-    # plot_mos_stat(db, d, "lss")
-    # plot_mos_stat(db, d, "ess", True)
+    # plot_mos_stat(db, d, "corr_horiz")
+    # plot_mos_stat(db, d, "corr_vert", True)
 
-    plt.clf()
-    plot_mos_stat(db, d, "entropy")
+    # plt.clf()
+    # plot_mos_stat(db, d, "uaci")
+    # plot_mos_stat(db, d, "npcr", True)
+    # # # plot_mos_stat(db, d, "chisquare")
 
-    stats_array(db, d)
+    # # plt.clf()
+    # # plot_mos_stat(db, d, "lss")
+    # # plot_mos_stat(db, d, "ess", True)
+
+    # plt.clf()
+    # plot_mos_stat(db, d, "entropy")
+
+    # stats_array(db, d)
 
     # plot_distortion_mos(db, d)
 
-    stat_cloud(db, d, "ss")
+    # stat_cloud(db, d, "ss")
     # stat_cloud(db, d, "lss")
     # stat_cloud(db, d, "ess")
+
+    compute_res(db, "ss", "/home/noe/Images/dataset/", get_filtered_mos(db, d))
     
 if __name__ == "__main__":
     main()
