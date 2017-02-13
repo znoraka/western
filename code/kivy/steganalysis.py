@@ -4,6 +4,9 @@ import numpy as np
 import math
 import random
 import matplotlib.pyplot as plt
+import os
+from glob import glob
+
 
 def embedd(message,key,image_path,stego_path):
     # print message
@@ -153,18 +156,23 @@ def detect(image_path, threshold):
     pil_image = Image.open(image_path)
     im_array = np.asarray(pil_image)
     im_stego = np.copy(im_array)
-    S = im_array[:,:,2]
+    # S = im_array[:,:,2]         #
+    S = im_array
+    # print im_array
 
     R1 = S[:,:-1]
     S1 = S[:,1:]
 
-    S = np.rot90(S)
+    # print S
+    # S = np.rot90(S)
+    # S = np.flipud(S)
+    # print S
+    # R2 = S[:,:-1]
+    # S2 = S[:,1:]
     
-    R2 = S[:,:-1]
-    S2 = S[:,1:]
-    
-    return do_detect(R1, S1), do_detect(R2, S2)
-    
+    # return do_detect(R1, S1), do_detect(R2, S2) #
+    return do_detect(R1, S1)
+
 # def main():
 #     f = open('data.txt', 'r')
 #     s = f.read()
@@ -196,6 +204,28 @@ def detect(image_path, threshold):
 #     plt.axvline(x=e1, ymin=0, ymax=100, hold=None)
 
 #     plt.show()
+
+# def main():
+#     path = "/home/noe/Téléchargements/images"
+#     result = [y for x in os.walk(path) for y in glob(os.path.join(x[0], '*.pgm'))]
+#     outfile = open('results.txt', 'w')
+
+#     l = []
+    
+#     for i in result:
+#         r = detect(i, 1)
+#         l += [r]
+#         print r
+#         # print l
+
+#     l = sorted(l)
+#     for i in l:
+#         print>>outfile, i
+
+#     # print detect("out.png", 1)
+    
+
+    
 
 # if __name__ == "__main__":
 #     main()
